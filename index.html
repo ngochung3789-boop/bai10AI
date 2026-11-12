@@ -571,6 +571,44 @@ body{background:radial-gradient(1200px 620px at 50% -10%, #123064 0%, #04081A 62
 .tr-aud-chip.just-added{animation:trpop .5s ease-out;}
 .tr-fly-dot{position:fixed; z-index:99; pointer-events:none; width:18px; height:18px; border-radius:50%; background:#2DD4BF; box-shadow:0 0 12px #2DD4BF; transition:all .5s ease-in;}
 
+
+/* ================= v7 — ĐƠN GIẢN HÓA + XEM NƠ-RON ================= */
+.tr-guide{font-size:17px; font-weight:800; line-height:1.35; color:#451A03; background:#FDE68A; border:2px solid #F59E0B; border-radius:12px; padding:7px 10px; margin:0 0 8px;}
+#trWatchBtn{width:100%; font-size:19px; padding:10px; margin-top:8px;}
+/* lớp bàn ghế đã có sẵn: ẩn khung ngắm + nút chụp, chỉ để lại lưới 6 ảnh mẫu */
+#trViewDeskBox, #trHoldDesk, #trSnapDesk, #trCamErrDesk{display:none !important;}
+#trThumbsDesk + .tr-hold-hint{display:none;}
+button[onclick*="trUpDesk"], button[onclick*="trClear('desk')"], button[onclick*="trLoadSample('desk')"]{display:none !important;}
+.tr-class.desk .tr-btns:has(#trHoldDesk), .tr-class.desk .tr-btns:has(#trSnapDesk),
+.tr-class.desk .tr-btns:has(button[onclick*="trUpDesk"]),
+.tr-class.desk .tr-btns:has(button[onclick*="trLoadSample('desk')"]){display:none;}
+#trBodyImg > .tr-col:first-child{overflow-y:auto; scrollbar-width:thin;}
+.tr-ready-tag{font-size:14px; font-weight:800; color:#34D399; margin-top:4px;}
+/* --- chế độ xem nơ-ron từng bước --- */
+#nnWatch{position:fixed; inset:0; z-index:100; display:none; align-items:center; justify-content:center; background:rgba(2,6,23,.96); color:var(--ink); padding:14px;}
+.nw-box{width:min(1060px,100%); max-height:100%; overflow:auto; background:radial-gradient(900px 500px at 50% -10%, #123064 0%, #04081A 65%), #04081A; border:2px solid var(--cyan); border-radius:18px; padding:14px 18px;}
+.nw-head{display:flex; align-items:flex-start; justify-content:space-between; gap:12px;}
+.nw-kicker{font-size:14px; font-weight:800; letter-spacing:1px; color:var(--cyan);}
+.nw-title{font-size:26px; color:#fff; margin:2px 0 0;}
+.nw-close{font-size:16px; padding:8px 14px; white-space:nowrap;}
+#nnWatchCanvas{width:100%; height:auto; display:block; background:#0B1526; border:2px solid var(--cyan); border-radius:12px; margin-top:10px;}
+.nw-step{margin-top:12px; background:#0B1B3D; border-left:6px solid var(--amber); border-radius:12px; padding:12px 14px; min-height:118px;}
+.nw-big{display:flex; gap:14px; align-items:stretch; margin-bottom:8px;}
+.nw-num{flex:1; background:#081226; border:2px solid #38BDF8; border-radius:12px; padding:8px 12px; text-align:center;}
+.nw-num span{display:block; font-size:16px; color:#BAE6FD;}
+.nw-num b{font-size:44px; color:#fff; line-height:1.1;}
+.nw-img{width:120px; height:90px; object-fit:cover; border-radius:10px; border:2px solid #38BDF8;}
+.nw-line{font-size:22px; line-height:1.45; color:#E0F2FE; margin:6px 0;}
+.nw-line.big{font-size:26px; color:#fff;}
+.nw-line b{color:#FDE68A;}
+.nw-chips{display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;}
+.nw-chip{font-size:16px; font-weight:800; background:#1E1B4B; border:1px solid #8B5CF6; color:#DDD6FE; border-radius:999px; padding:5px 12px;}
+.nw-chip.hot{background:#6D28D9; border-color:#C4B5FD; color:#fff;}
+.nw-ctrl{display:flex; gap:10px; align-items:center; margin-top:12px; flex-wrap:wrap;}
+.nw-ctrl button{font-size:17px; padding:9px 16px;}
+.nw-ctrl #nwNext{font-size:19px; padding:10px 22px;}
+.nw-count{font-size:16px; font-weight:800; color:#fff; margin-left:auto;}
+.nw-bound{font-size:14px; color:#FDE68A; line-height:1.4; margin:12px 0 0;}
 </style>
 </head>
 <body>
@@ -721,6 +759,7 @@ body{background:radial-gradient(1200px 620px at 50% -10%, #123064 0%, #04081A 62
         </div>
         <div class="box-btn">
           <button class="btn-amber btn-big" id="boxBtn" onclick="toggleBox()">🔓 Mở hộp đen</button>
+          <button class="btn-green btn-big" id="s4WatchBtn" onclick="openNnWatch()" style="margin-top:8px">🔍 Xem nơ-ron hoạt động từng bước</button>
         </div>
         <div class="parts">
           <div class="part"><b>① Kho chứa</b> — 12 chấm, mỗi chấm truy vết về ảnh gốc.</div>
@@ -893,15 +932,15 @@ body{background:radial-gradient(1200px 620px at 50% -10%, #123064 0%, #04081A 62
     <div class="tr-col">
       <h3>📚 Lớp học — nạp dữ liệu</h3>
       <div class="tr-class face">
-        <div class="tr-class-head"><span class="dot" style="background:#38BDF8"></span><input id="trNameFace" value="Thầy Hưng" onchange="trRename('face', this.value)" aria-label="Tên lớp 1"><span class="tr-cnt" id="trCntFace">0 / 6 ảnh</span></div>
+        <div class="tr-class-head"><span class="dot" style="background:#38BDF8"></span><input id="trNameFace" value="Mặt thầy" onchange="trRename('face', this.value)" aria-label="Tên lớp 1"><span class="tr-cnt" id="trCntFace">0 / 6 ảnh</span></div>
         <div class="tr-view" id="trViewFaceBox" onclick="trViewClick('face')" title="Bấm để bật camera" style="cursor:pointer">
           <video class="tr-view-video" id="trViewFace" autoplay playsinline muted></video>
           <div class="tr-view-off" id="trViewOffFace">📷 Chưa bật camera — bấm giữ để chụp, camera sẽ tự bật</div>
           <div class="tr-view-flash" id="trViewFlashFace"></div>
-          <div class="tr-view-tag">Khung ngắm — lớp “Thầy Hưng”</div>
+          <div class="tr-view-tag">Khung ngắm — lớp “Mặt thầy”</div>
         </div>
         <div class="tr-thumbs" id="trThumbsFace"></div>
-        <div class="tr-hold-hint">Giữ chuột (hoặc giữ tay) để chụp liên tiếp — thả ra là dừng. Mỗi 0,5 giây chụp 1 ảnh. Bấm 1 cái cũng chụp được 1 ảnh — camera tự bật khi bấm.</div>
+        <div class="tr-hold-hint">Giữ để chụp liên tiếp — thả ra là dừng. Bấm 1 cái cũng chụp được 1 ảnh.</div>
         <div class="tr-btns">
           <button class="tr-hold tr-hold-big" id="trHoldFace" onpointerdown="trHoldStart('face', this)" onpointerup="trHoldStop()" onpointerleave="trHoldStop()" oncontextmenu="return false"><svg class="tr-ring" viewBox="0 0 44 44"><circle class="tr-ring-bg" cx="22" cy="22" r="19"></circle><circle class="tr-ring-fg" id="trRingFace" cx="22" cy="22" r="19"></circle></svg><span class="tr-hold-label">📷 GIỮ ĐỂ CHỤP</span><span class="tr-hold-count" id="trHoldCntFace"></span></button>
         </div>
@@ -916,7 +955,7 @@ body{background:radial-gradient(1200px 620px at 50% -10%, #123064 0%, #04081A 62
         <input type="file" id="trUpFace" accept="image/*" style="display:none" onchange="trUpload('face', this)">
       </div>
       <div class="tr-class desk">
-        <div class="tr-class-head"><span class="dot" style="background:#FB923C"></span><input id="trNameDesk" value="Bàn ghế" onchange="trRename('desk', this.value)" aria-label="Tên lớp 2"><span class="tr-cnt" id="trCntDesk">0 / 6 ảnh</span></div>
+        <div class="tr-class-head"><span class="dot" style="background:#FB923C"></span><b style="font-size:18px">Không phải mặt thầy</b><span style="font-size:13px;color:#FDBA74"> (bàn ghế — đã có sẵn)</span><span class="tr-cnt" id="trCntDesk">0 / 6 ảnh</span></div>
         <div class="tr-view" id="trViewDeskBox" onclick="trViewClick('desk')" title="Bấm để bật camera" style="cursor:pointer">
           <video class="tr-view-video" id="trViewDesk" autoplay playsinline muted></video>
           <div class="tr-view-off" id="trViewOffDesk">📷 Chưa bật camera — bấm giữ để chụp, camera sẽ tự bật</div>
@@ -935,16 +974,18 @@ body{background:radial-gradient(1200px 620px at 50% -10%, #123064 0%, #04081A 62
           <button class="btn-ghost" onclick="trClear('desk')">🗑️ Xóa ảnh</button>
         </div>
         <div class="tr-btns"><button class="btn-amber" onclick="trLoadSample('desk')">🖼️ Mẫu</button></div>
-        <div class="tr-sample-tag">🏷️ Ảnh mẫu bàn ghế trong lớp học</div>
+        <div class="tr-ready-tag">✅ Đã có sẵn 6 ảnh mẫu — thầy không cần chụp</div>
         <input type="file" id="trUpDesk" accept="image/*" style="display:none" onchange="trUpload('desk', this)">
       </div>
     </div>
 
     <div class="tr-col">
       <h3>⚙️ Huấn luyện — nhìn thấy từng bước</h3>
+      <p class="tr-guide">👉 Thầy chỉ cần chụp mặt thầy (6 ảnh) — lớp bên kia đã có sẵn rồi.</p>
       <button class="btn-green btn-big" id="trTrainBtn" onclick="trTrain()">▶️ HUẤN LUYỆN</button>
       <div class="tr-progress"><div id="trProgBar"></div></div>
-      <p id="trStep">Chưa huấn luyện — nạp ảnh vào 2 lớp, rồi bấm “▶️ HUẤN LUYỆN”.</p>
+      <p id="trStep">Chưa huấn luyện — chụp ảnh mặt thầy rồi bấm “▶️ HUẤN LUYỆN”. Lớp bàn ghế đã có sẵn rồi.</p>
+      <button class="btn-amber btn-big" id="trWatchBtn" onclick="openNnWatch()">🔍 Mở hộp đen — xem nơ-ron hoạt động</button>
       <div class="tr-mini-map">
         <div class="tr-mini-head">📦 Bản đồ chấm trong hộp đen — <span id="trMapCount">hộp đang trống</span></div>
         <div class="tr-map-wrap">
@@ -974,11 +1015,11 @@ body{background:radial-gradient(1200px 620px at 50% -10%, #123064 0%, #04081A 62
         <button class="btn-ghost" onclick="trPreviewTest('desk')">🪑 Thử bàn ghế</button>
       </div>
       <div class="tr-bar-row">
-        <label>🟦 <span class="tr-bar-name-face">Thầy Hưng</span>: <span id="trPctFace">—</span></label>
+        <label>🟦 <span class="tr-bar-name-face">Mặt thầy</span>: <span id="trPctFace">—</span></label>
         <div class="tr-bar"><div id="trBarFace" style="width:0%; background:#38BDF8"></div></div>
       </div>
       <div class="tr-bar-row">
-        <label>🟧 <span class="tr-bar-name-desk">Bàn ghế</span>: <span id="trPctDesk">—</span></label>
+        <label>🟧 <span class="tr-bar-name-desk">Không phải mặt thầy</span>: <span id="trPctDesk">—</span></label>
         <div class="tr-bar"><div id="trBarDesk" style="width:0%; background:#FB923C"></div></div>
       </div>
       <p id="trGuess">Máy đoán: —</p>
@@ -1433,6 +1474,7 @@ function runTest(key){
   const img = t.src==="face"?faceImg:deskImg;
   const f=computeFeatures(img,t.f,t.crop);
   const item={cls:t.src, b:f.b, c:f.c, bright:t.f, crop:t.crop, thumb:variantThumb(img,t.f,t.crop,280)};
+  window._nwThumb = item.thumb;
   showInspector(item);
   flowFast(true); setStation(1);
   setTimeout(()=>setStation(2),450);
@@ -1595,6 +1637,7 @@ faceImg.onload=deskImg.onload=()=>{
       const f0=computeFeatures(faceImg,1,1);
       showInspector({cls:"face", b:f0.b, c:f0.c, bright:1, crop:1, thumb:FACE_SRC, label:"Thầy Hưng"});
       drawMap();
+      if (typeof trOpen !== "undefined" && trOpen) trPreloadDesk();
     }catch(e){ loaded--; /* ảnh ngoài bị bẩn canvas khi mở bằng file:// — guard đổi sang ảnh nhúng rồi onload chạy lại */ }
   }
 };
@@ -1986,12 +2029,28 @@ let trAudStream = null, trAudCtx = null, trAudAnalyser = null, trAudRec = null, 
 function trSleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
 function trSync() { renderThumbs(); drawMap(); renderTrainer(); }
 
+/* ---------- v7 — ĐƠN GIẢN HÓA: chỉ chụp mặt thầy, lớp bàn ghế có sẵn ---------- */
+function trDName(cls){ return cls === "face" ? "Mặt thầy" : "Không phải mặt thầy"; }
+var deskPreloaded = false;
+function trPreloadDesk(){
+  if (deskPreloaded) return true;
+  if (loaded < 2) return false;
+  if (train.desk.length >= VARIANTS.length) { deskPreloaded = true; return true; }
+  while (train.desk.length < VARIANTS.length) addOne("desk", true);
+  deskPreloaded = true;
+  renderTrainer(); drawMap();
+  return true;
+}
+
+
 function openTrainer() {
   trOpen = true;
   document.getElementById("deck").style.display = "none";
   document.querySelector(".deck-nav").style.display = "none";
   document.querySelector(".progress").style.display = "none";
   document.getElementById("trainer").classList.add("on");
+  trPreloadDesk();
+  if (!deskPreloaded) { setTimeout(function(){ if (trOpen) { trPreloadDesk(); trSync(); } }, 1200); }
   trSync();
   toast("Đã mở hệ thống huấn luyện.");
 }
@@ -2045,23 +2104,25 @@ function renderTrainer() {
       var e = document.createElement("div"); e.className = "thumb empty"; e.textContent = "+"; box.appendChild(e);
     }
     var nm = document.querySelector(".tr-bar-name-" + cls);
-    if (nm) nm.textContent = CLASSES[cls].name;
+    if (nm) nm.textContent = trDName(cls);
   }
   var total = train.face.length + train.desk.length;
   document.getElementById("trMapCount").textContent = total === 0 ? "hộp đang trống" : total + " chấm đã lưu";
 }
 function trDel(cls, i) {
+  if (cls === "desk" && train.desk.length <= 1) { toast("Lớp bàn ghế đã có sẵn — giữ lại ít nhất 1 ảnh để máy còn biết “không phải mặt thầy” là gì."); return; }
   train[cls].splice(i, 1);
   nnTrained.img = false; var _nc = document.getElementById("nnCapT"); if (_nc) _nc.textContent = "Đã đổi dữ liệu — bấm “HUẤN LUYỆN” lại để trọng số cập nhật theo dữ liệu mới.";
   if (cls === "face") fixedDone = false;
   trSync();
-  toast("Đã xóa 1 ảnh khỏi lớp “" + CLASSES[cls].name + "”.");
+  toast("Đã xóa 1 ảnh khỏi lớp “" + trDName(cls) + "”.");
 }
 function trClear(cls) {
   train[cls] = [];
   nnTrained.img = false; var _nc2 = document.getElementById("nnCapT"); if (_nc2) _nc2.textContent = "Đã đổi dữ liệu — bấm “HUẤN LUYỆN” lại để trọng số cập nhật theo dữ liệu mới.";
   if (cls === "face") fixedDone = false;
   trSync();
+  if (cls === "desk") { deskPreloaded = false; trPreloadDesk(); toast("Lớp bàn ghế đã có sẵn — đã nạp lại 6 ảnh mẫu."); return; }
   toast("Đã xóa hết ảnh trong lớp “" + CLASSES[cls].name + "”.");
 }
 function trRename(cls, val) {
@@ -2078,7 +2139,7 @@ function trUpload(cls, input) {
     var f = computeFeatures(img, 1, 1);
     train[cls].push({ cls: cls, b: f.b, c: f.c, bright: 1, crop: 1, thumb: variantThumb(img, 1, 1, 120), imgEl: img, label: CLASSES[cls].name + " (tải lên) #" + (train[cls].length + 1) });
     trSync();
-    toast("Đã thêm 1 ảnh tải lên vào lớp “" + CLASSES[cls].name + "” (S:" + f.b + " • T:" + f.c + ").");
+    toast("Đã thêm 1 ảnh tải lên vào lớp “" + trDName(cls) + "” (S:" + f.b + " • T:" + f.c + ").");
   };
   img.onerror = function () { toast("⚠️ Không đọc được file ảnh này."); };
   img.src = url;
@@ -2089,7 +2150,7 @@ function trSnapFrame(cls, fromHold) {
   var v = document.getElementById(cls === "face" ? "trViewFace" : "trViewDesk");
   if (!v || v.readyState < 2) v = document.getElementById("trVideo");
   if (!v || v.readyState < 2) return false;
-  if (train[cls].length >= 12) { trHoldStop(); toast("Lớp “" + CLASSES[cls].name + "” đã đủ 12 ảnh."); return false; }
+  if (train[cls].length >= 12) { trHoldStop(); toast("Lớp “" + trDName(cls) + "” đã đủ 12 ảnh."); return false; }
   var cv = document.createElement("canvas"); cv.width = 480; cv.height = 360;
   cv.getContext("2d").drawImage(v, 0, 0, 480, 360);
   var url = cv.toDataURL("image/jpeg", 0.85);
@@ -2176,7 +2237,7 @@ async function trSnapOnce(cls, btn) {
   if (btn) btn.textContent = "⏳ Đang chụp…";
   var ready = await trWaitVideoReady(cls);
   if (ready && trSnapFrame(cls, false)) {
-    toast("Đã chụp 1 ảnh vào lớp “" + CLASSES[cls].name + "”.");
+    toast("Đã chụp 1 ảnh vào lớp “" + trDName(cls) + "”.");
   } else if (err) {
     err.textContent = "⚠️ Camera chưa kịp mở hình — thử bấm lại.";
   }
@@ -2234,7 +2295,7 @@ function trHoldStop() {
   if (trHoldCls) {
     var n = train[trHoldCls].length;
     trUpdateRing(trHoldCls, n);
-    if (n > 0) toast("Đã chụp " + n + " ảnh vào lớp “" + CLASSES[trHoldCls].name + "”.");
+    if (n > 0) toast("Đã chụp " + n + " ảnh vào lớp “" + trDName(trHoldCls) + "”.");
     trHoldCls = null;
   }
 }
@@ -2243,10 +2304,10 @@ function trHoldStop() {
 /* ---------- CỘT GIỮA: HUẤN LUYỆN NHÌN THẤY ĐƯỢC ---------- */
 async function trTrain() {
   if (trTraining) return;
+  trPreloadDesk();
   var total = train.face.length + train.desk.length;
   var step = document.getElementById("trStep");
-  if (total === 0) { step.textContent = "⚠️ Chưa có ảnh nào — nạp ảnh vào 2 lớp trước đã."; toast("Chưa có ảnh nào để huấn luyện."); return; }
-  if (train.face.length === 0 || train.desk.length === 0) { step.textContent = "⚠️ Cần ảnh ở cả 2 lớp mới huấn luyện được."; toast("Cần ảnh ở cả 2 lớp mới huấn luyện được."); return; }
+  if (train.face.length === 0) { step.textContent = "📷 Chụp ảnh mặt thầy trước đã, rồi bấm Huấn luyện."; toast("Chụp ảnh mặt thầy trước đã, rồi bấm Huấn luyện."); return; }
   trTraining = true; trTrained = false; NN.img = nnMake(); nnTrained.img = false;
   var btn = document.getElementById("trTrainBtn"); btn.disabled = true; btn.textContent = "⏳ Đang huấn luyện…";
   var items = [];
@@ -2256,18 +2317,18 @@ async function trTrain() {
     var t = items[i];
     var el = document.querySelector('#trainer .tr-thumbs .thumb[data-cls="' + t.cls + '"][data-i="' + train[t.cls].indexOf(t) + '"]');
     if (el) el.classList.add("training");
-    step.textContent = "Đang đọc ảnh " + (i + 1) + "/" + items.length + " — lớp “" + CLASSES[t.cls].name + "” → thành 2 con số (Độ sáng " + t.b + " • Độ tương phản " + t.c + ") → lưu thành 1 chấm.";
+    step.textContent = "Đang đọc ảnh " + (i + 1) + "/" + items.length + " — lớp “" + trDName(t.cls) + "” → thành 2 con số (Độ sáng " + t.b + " • Độ tương phản " + t.c + ") → lưu thành 1 chấm.";
     document.getElementById("trProgBar").style.width = Math.round((i + 1) / items.length * 100) + "%";
     nnTrainStep("img", [t.b / 100, t.c / 100], t.cls === "face" ? 0 : 1);
     nnDraw("nnCanvasT", "img", [t.b / 100, t.c / 100], (i + 1) / items.length);
-    document.getElementById("nnCapT").textContent = "Vừa ghi nhận ảnh " + (i + 1) + "/" + items.length + " — lớp “" + CLASSES[t.cls].name + "” (S " + t.b + " • T " + t.c + ") → trọng số về phía lớp đó tăng lên.";
+    document.getElementById("nnCapT").textContent = "Vừa ghi nhận ảnh " + (i + 1) + "/" + items.length + " — lớp “" + trDName(t.cls) + "” (S " + t.b + " • T " + t.c + ") → trọng số về phía lớp đó tăng lên.";
     drawMap();
     await trSleep(450);
     if (el) el.classList.remove("training");
   }
   trTrained = true; trTraining = false;
   btn.disabled = false; btn.textContent = "▶️ HUẤN LUYỆN";
-  step.textContent = "✅ Đã huấn luyện xong — " + total + " chấm đã lưu (" + train.face.length + " chấm “" + CLASSES.face.name + "” • " + train.desk.length + " chấm “" + CLASSES.desk.name + "”). Bây giờ đưa mặt hoặc bàn ghế vào camera để xem trực tiếp.";
+  step.textContent = "✅ Đã huấn luyện xong — " + total + " chấm đã lưu (" + train.face.length + " chấm “Mặt thầy” • " + train.desk.length + " chấm “Không phải mặt thầy”). Bây giờ đưa mặt vào camera để xem trực tiếp.";
   drawMap();
   toast("Đã huấn luyện xong — " + total + " chấm đã lưu.");
 }
@@ -2296,8 +2357,9 @@ function trFrameFeatures() {
   return { b: Math.round(mean / 255 * 1000) / 10, c: Math.round(Math.min(100, std / 64 * 100) * 10) / 10 };
 }
 function trShowPrediction(f, truth) {
-  if (train.face.length === 0 || train.desk.length === 0) {
-    document.getElementById("trGuess").innerHTML = "Máy đoán: — (chưa đủ dữ liệu — nạp ảnh 2 lớp rồi huấn luyện trước)";
+  trPreloadDesk();
+  if (train.face.length === 0) {
+    document.getElementById("trGuess").innerHTML = "Máy đoán: — (chụp ảnh mặt thầy rồi bấm Huấn luyện trước)";
     return;
   }
   var p = predict(f);
@@ -2311,13 +2373,16 @@ function trShowPrediction(f, truth) {
   testDot = { b: f.b, c: f.c, truth: truth || null, pred: p.win, conf: p.conf, near: p.near };
   drawMap();
   nnDraw("nnCanvasT", "img", [f.b / 100, f.c / 100], 1);
-  document.getElementById("trGuess").innerHTML = "Máy đoán: <b>“" + p.win + "”</b> • Mức chắc chắn: <b>" + p.conf + "%</b>" + (truth ? " • Đáp án đúng: <b>“" + truth + "”</b> " + (p.win === truth ? "✅ Đúng" : "❌ Sai") : "");
-  document.getElementById("trNear").textContent = "3 chấm gần nhất: " + p.near.map(function (n) { return "“" + n.label + "” (" + n.d.toFixed(1) + ")"; }).join(" • ") + " — bên đông hơn thắng.";
+  var verdict = p.win === faceName ? "Đây là mặt thầy" : "Không phải mặt thầy";
+  var truthTxt = truth ? (truth === faceName ? "Đây là mặt thầy" : "Không phải mặt thầy") : null;
+  document.getElementById("trGuess").innerHTML = "Máy đoán: <b>" + verdict + "</b> • Mức chắc chắn: <b>" + p.conf + "%</b>" + (truth ? " • Đáp án đúng: <b>" + truthTxt + "</b> " + (p.win === truth ? "✅ Đúng" : "❌ Sai") : "");
+  document.getElementById("trNear").textContent = "3 chấm gần nhất: " + p.near.map(function (n) { return "“" + (n.label === faceName ? "Mặt thầy" : "Không phải mặt thầy") + "” (" + n.d.toFixed(1) + ")"; }).join(" • ") + " — bên đông hơn thắng.";
 }
 function trPreviewTest(key) {
   var t = TESTS[key];
   var img = t.src === "face" ? faceImg : deskImg;
   var f = computeFeatures(img, t.f, t.crop);
+  window._nwThumb = variantThumb(img, t.f, t.crop, 280);
   trShowPrediction(f, t.truth);
 }
 setInterval(function () {
@@ -2325,7 +2390,7 @@ setInterval(function () {
   if (document.getElementById("trBodyImg").style.display === "none") return;
   var v = document.getElementById("trVideo");
   if (!v || v.readyState < 2) return;
-  if (train.face.length === 0 || train.desk.length === 0) return;
+  if (train.face.length === 0) return;
   var f = trFrameFeatures();
   trShowPrediction(f, null);
 }, 600);
@@ -2748,6 +2813,150 @@ function trAudWaveStart(){
 
 renderTrainer();
 
+
+/* ================= v7 — MỞ HỘP ĐEN: xem nơ-ron hoạt động từng bước ================= */
+var nwStepIdx = 0, nwTimer = null, nwData = null, nwPulseRaf = null;
+function nwVerdict(win){ return win === CLASSES.face.name ? "Đây là mặt thầy" : "Không phải mặt thầy"; }
+function nwStopPulse(){ if (nwPulseRaf) { cancelAnimationFrame(nwPulseRaf); nwPulseRaf = null; } }
+async function openNnWatch(){
+  var inTrainer = document.getElementById("trainer").classList.contains("on");
+  if (train.face.length === 0) {
+    if (inTrainer) {
+      var st = document.getElementById("trStep");
+      if (st) st.textContent = "📷 Chụp ảnh mặt thầy và bấm Huấn luyện trước đã, rồi mở hộp đen xem.";
+      toast("Chụp ảnh mặt thầy và bấm Huấn luyện trước đã, rồi mở hộp đen xem.");
+    } else {
+      toast("Sang slide 2 bấm “Nạp tất cả 12 ảnh” trước đã, rồi mở hộp đen xem.");
+    }
+    return;
+  }
+  if (!nnTrained.img) {
+    toast("⏳ Đang huấn luyện để trọng số cập nhật, rồi mở hộp đen…");
+    await trTrain();
+    if (train.face.length === 0) return;
+  }
+  var f, truth = null;
+  if (testDot) { f = {b: testDot.b, c: testDot.c}; truth = testDot.truth; }
+  else { var t = TESTS.bright; f = computeFeatures(faceImg, t.f, t.crop); truth = t.truth; }
+  var p = predict(f);
+  nwData = {b: f.b, c: f.c, truth: truth, win: p.win, conf: p.conf, near: p.near,
+            thumb: (truth && typeof window._nwThumb !== "undefined") ? window._nwThumb : null};
+  nwStepIdx = 0;
+  document.getElementById("nnWatch").style.display = "flex";
+  nwRender();
+}
+function closeNnWatch(){
+  nwStopPulse(); nwAutoStop();
+  document.getElementById("nnWatch").style.display = "none";
+}
+function nwNext(){
+  if (nwStepIdx >= 3) { closeNnWatch(); return; }
+  nwStepIdx++; nwRender();
+}
+function nwGo(n){
+  if (n < 0) n = 0; if (n > 3) n = 3;
+  nwStepIdx = n; nwRender();
+}
+function nwAutoToggle(){
+  if (nwTimer) { nwAutoStop(); return; }
+  if (nwStepIdx >= 3) { nwStepIdx = 0; nwRender(); }
+  document.getElementById("nwAuto").textContent = "⏸ Dừng chạy tự động";
+  nwTimer = setInterval(function(){
+    if (nwStepIdx >= 3) { nwAutoStop(); return; }
+    nwStepIdx++; nwRender();
+  }, 3200);
+}
+function nwAutoStop(){
+  if (nwTimer) { clearInterval(nwTimer); nwTimer = null; }
+  var b = document.getElementById("nwAuto"); if (b) b.textContent = "▶ Chạy chậm tự động";
+}
+function nwPulseAnim(){
+  nwStopPulse();
+  var d = nwData; if (!d) return;
+  var t0 = null;
+  function frame(ts){
+    if (!t0) t0 = ts;
+    var pr = Math.min(1, (ts - t0) / 2200);
+    nnDraw("nnWatchCanvas", "img", [d.b/100, d.c/100], pr);
+    if (pr < 1 && nwStepIdx === 1 && document.getElementById("nnWatch").style.display === "flex") {
+      nwPulseRaf = requestAnimationFrame(frame);
+    } else { nwPulseRaf = null; }
+  }
+  nwPulseRaf = requestAnimationFrame(frame);
+}
+function nwRender(){
+  var d = nwData; if (!d) return;
+  nwStopPulse();
+  var stepEl = document.getElementById("nwStep");
+  var fwd = nnForward("img", [d.b/100, d.c/100]);
+  var verdict = nwVerdict(d.win);
+  document.getElementById("nwCount").textContent = "Bước " + (nwStepIdx + 1) + " / 4";
+  document.getElementById("nwPrev").disabled = (nwStepIdx === 0);
+  document.getElementById("nwNext").textContent = (nwStepIdx === 3) ? "✕ Đóng" : "Tiếp ›";
+  var html = "";
+  if (nwStepIdx === 0) {
+    nnDraw("nnWatchCanvas", "img", [d.b/100, d.c/100], 0);
+    html = '<div class="nw-big">'
+      + (d.thumb ? '<img class="nw-img" src="' + d.thumb + '" alt="Ảnh thử">' : '')
+      + '<div class="nw-num"><span>Độ sáng</span><b>' + d.b + '</b></div>'
+      + '<div class="nw-num"><span>Độ tương phản</span><b>' + d.c + '</b></div></div>'
+      + '<p class="nw-line">Ảnh đi vào hộp đen. Máy <b>không nhìn thấy hình</b> — máy chỉ nhận <b>2 con số</b> này.</p>';
+  } else if (nwStepIdx === 1) {
+    var bi = 0, j;
+    for (j = 1; j < 4; j++) if (fwd.h[j] > fwd.h[bi]) bi = j;
+    var act = Math.round((fwd.h[bi] + 1) / 2 * 100);
+    var brightWord = d.b >= 60 ? "sáng" : (d.b <= 40 ? "tối" : "vừa sáng");
+    var chips = "";
+    for (j = 0; j < 4; j++) {
+      chips += '<span class="nw-chip' + (j === bi ? ' hot' : '') + '">Ẩn ' + (j+1) + ': ' + Math.round((fwd.h[j]+1)/2*100) + '%</span>';
+    }
+    html = '<p class="nw-line">Tín hiệu chạy từ trái sang phải, qua 4 nơ-ron lớp ẩn.</p>'
+      + '<p class="nw-line">Nơ-ron <b>Ẩn ' + (bi+1) + ' sáng mạnh nhất (' + act + '%)</b> — ảnh này ' + brightWord + ' (Độ sáng ' + d.b + ') nên tín hiệu vào nơ-ron này lớn nhất.</p>'
+      + '<div class="nw-chips">' + chips + '</div>';
+    nwPulseAnim();
+  } else if (nwStepIdx === 2) {
+    nnDraw("nnWatchCanvas", "img", [d.b/100, d.c/100], 1);
+    var faceN = 0; d.near.forEach(function(n){ if (n.label === CLASSES.face.name) faceN++; });
+    var deskN = d.near.length - faceN;
+    var nnWin = fwd.out[0] >= fwd.out[1] ? CLASSES.face.name : CLASSES.desk.name;
+    var nnPct = Math.round(Math.max(fwd.out[0], fwd.out[1]) * 100);
+    var nnNote = (nnWin === d.win)
+      ? '<p class="nw-line">Sơ đồ nơ-ron minh họa cũng nghiêng về “' + nwVerdict(nnWin) + '” (' + nnPct + '%) — nhưng máy trong app vẫn đoán bằng 3 chấm gần nhất, không dùng số này.</p>'
+      : '<p class="nw-line">Chú ý: sơ đồ nơ-ron minh họa cho ra “' + nwVerdict(nnWin) + '” (' + nnPct + '%) — khác với máy! Vì máy trong app <b>không</b> dùng nơ-ron để đoán; máy đoán bằng <b>3 chấm gần nhất</b>.</p>';
+    html = '<p class="nw-line big">Máy đoán: <b>' + verdict + ' — ' + d.conf + '%</b></p>'
+      + '<p class="nw-line">3 chấm gần nhất: <b>' + faceN + ' chấm “Mặt thầy”</b>, <b>' + deskN + ' chấm “Không phải mặt thầy”</b> — bên đông hơn thắng.</p>'
+      + (d.truth ? '<p class="nw-line">Đáp án đúng: <b>' + nwVerdict(d.truth) + '</b> ' + (d.win === d.truth ? '✅ Đúng' : '❌ Sai') + '</p>' : '')
+      + nnNote;
+  } else {
+    nnDraw("nnWatchCanvas", "img", [d.b/100, d.c/100], 1);
+    html = '<p class="nw-line big">Nhớ 1 câu: <b>máy đoán theo 3 chấm gần nhất</b> — mạng nơ-ron chỉ minh họa cách ghi nhận việc học.</p>'
+      + '<p class="nw-line">Mỗi ảnh huấn luyện làm trọng số đổi một chút (w mới = w cũ + 0,05 × tín hiệu vào × sai số). Càng nhiều ảnh đúng, máy càng đoán đúng.</p>';
+  }
+  stepEl.innerHTML = html;
+}
+
 </script>
+
+<!-- v7 — MỞ HỘP ĐEN: xem nơ-ron hoạt động từng bước -->
+<div id="nnWatch" role="dialog" aria-label="Mở hộp đen — xem nơ-ron hoạt động">
+  <div class="nw-box">
+    <div class="nw-head">
+      <div>
+        <div class="nw-kicker">🔍 MỞ HỘP ĐEN — XEM NƠ-RON HOẠT ĐỘNG</div>
+        <h2 class="nw-title">Nơ-ron làm gì khi máy đoán?</h2>
+      </div>
+      <button class="btn-ghost nw-close" onclick="closeNnWatch()">✕ Đóng</button>
+    </div>
+    <canvas id="nnWatchCanvas" width="960" height="280"></canvas>
+    <div class="nw-step" id="nwStep"></div>
+    <div class="nw-ctrl">
+      <button class="btn-ghost" id="nwPrev" onclick="nwGo(nwStepIdx-1)">‹ Quay lại</button>
+      <button class="btn-green" id="nwAuto" onclick="nwAutoToggle()">▶ Chạy chậm tự động</button>
+      <button class="btn-amber btn-big" id="nwNext" onclick="nwNext()">Tiếp ›</button>
+      <span class="nw-count" id="nwCount">Bước 1 / 4</span>
+    </div>
+    <p class="nw-bound">⚠️ Sơ đồ nơ-ron minh họa CÁCH mạng nơ-ron ghi nhận việc học (trọng số đổi theo dữ liệu). Máy trong app đoán bằng cách đo khoảng cách 3 chấm gần nhất (k-NN) — nơ-ron không phải bộ phân loại thật ở đây.</p>
+  </div>
+</div>
 </body>
 </html>
