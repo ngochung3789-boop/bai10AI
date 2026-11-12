@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Học Nhìn Ảnh v5 — 7 slide + Hệ thống huấn luyện kiểu Teachable Machine — Mở hộp đen xem máy học</title>
+<title>AI Học Nhìn Ảnh v6 — 7 slide + Hệ thống huấn luyện kiểu Teachable Machine — Mở hộp đen xem máy học</title>
 <style>
 
 /* ================= PHONG CÁCH: VIỄN TƯỞNG (SCI-FI) — nền vũ trụ navy tối, viền cyan phát sáng, điểm nhấn cam ================= */
@@ -319,8 +319,8 @@ body{background:radial-gradient(1200px 620px at 50% -10%, #123064 0%, #04081A 62
 .cam-panel h3{font-size:20px; color:#67E8F9; margin-bottom:8px;}
 #camVideo2{width:100%; max-height:190px; object-fit:cover; border-radius:12px; border:2px solid var(--cyan);
   background:#000; display:none;}
-#camStatus{font-size:16px; color:#E2E8F0; margin:8px 0; min-height:22px;}
-.cam-btns{display:flex; gap:8px; flex-wrap:wrap;}
+#camStatus{font-size:16px; color:#E2E8F0; margin:8px 0; min-height:22px; flex-shrink:0;}
+.cam-btns{display:flex; gap:8px; flex-wrap:wrap; flex-shrink:0;}
 .cam-btns button{font-size:15px; padding:8px 12px;}
 .cam-note{font-size:15px; color:var(--muted); margin-top:10px; line-height:1.45;}
 .img-err{background:rgba(127,29,29,.5); border:2px solid var(--red); color:#FCA5A5; border-radius:12px;
@@ -635,8 +635,8 @@ body{background:radial-gradient(1200px 620px at 50% -10%, #123064 0%, #04081A 62
         <p id="camStatus">Chưa bật camera.</p>
         <div class="cam-btns">
           <button class="btn-navy" id="btnCamOn" onclick="startTeacherCam()">📷 Bật camera</button>
-          <button class="btn-green" id="btnCamBright" onclick="captureTeacherPhase(1)" disabled>📸 Chụp 3 ảnh đủ sáng</button>
-          <button class="btn-amber" id="btnCamDark" onclick="captureTeacherPhase(2)" disabled>🌑 Chụp 3 ảnh tối</button>
+          <button class="btn-green" id="btnCamBright" onclick="captureTeacherPhase(1)">📸 Chụp 3 ảnh đủ sáng</button>
+          <button class="btn-amber" id="btnCamDark" onclick="captureTeacherPhase(2)">🌑 Chụp 3 ảnh tối</button>
           <button class="btn-ghost" onclick="stopTeacherCam()">Tắt camera</button>
           <button class="btn-ghost" onclick="restoreSamples()">↺ Dùng lại ảnh mẫu</button>
         </div>
@@ -894,17 +894,18 @@ body{background:radial-gradient(1200px 620px at 50% -10%, #123064 0%, #04081A 62
       <h3>📚 Lớp học — nạp dữ liệu</h3>
       <div class="tr-class face">
         <div class="tr-class-head"><span class="dot" style="background:#38BDF8"></span><input id="trNameFace" value="Thầy Hưng" onchange="trRename('face', this.value)" aria-label="Tên lớp 1"><span class="tr-cnt" id="trCntFace">0 / 6 ảnh</span></div>
-        <div class="tr-view" id="trViewFaceBox">
+        <div class="tr-view" id="trViewFaceBox" onclick="trViewClick('face')" title="Bấm để bật camera" style="cursor:pointer">
           <video class="tr-view-video" id="trViewFace" autoplay playsinline muted></video>
-          <div class="tr-view-off" id="trViewOffFace">📷 Chưa bật camera — bấm “Bật camera” ở cột phải</div>
+          <div class="tr-view-off" id="trViewOffFace">📷 Chưa bật camera — bấm giữ để chụp, camera sẽ tự bật</div>
           <div class="tr-view-flash" id="trViewFlashFace"></div>
           <div class="tr-view-tag">Khung ngắm — lớp “Thầy Hưng”</div>
         </div>
         <div class="tr-thumbs" id="trThumbsFace"></div>
-        <div class="tr-hold-hint">Giữ chuột (hoặc giữ tay) để chụp liên tiếp — thả ra là dừng. Mỗi 0,5 giây chụp 1 ảnh.</div>
+        <div class="tr-hold-hint">Giữ chuột (hoặc giữ tay) để chụp liên tiếp — thả ra là dừng. Mỗi 0,5 giây chụp 1 ảnh. Bấm 1 cái cũng chụp được 1 ảnh — camera tự bật khi bấm.</div>
         <div class="tr-btns">
           <button class="tr-hold tr-hold-big" id="trHoldFace" onpointerdown="trHoldStart('face', this)" onpointerup="trHoldStop()" onpointerleave="trHoldStop()" oncontextmenu="return false"><svg class="tr-ring" viewBox="0 0 44 44"><circle class="tr-ring-bg" cx="22" cy="22" r="19"></circle><circle class="tr-ring-fg" id="trRingFace" cx="22" cy="22" r="19"></circle></svg><span class="tr-hold-label">📷 GIỮ ĐỂ CHỤP</span><span class="tr-hold-count" id="trHoldCntFace"></span></button>
         </div>
+        <div class="tr-btns"><button class="btn-green" id="trSnapFace" onclick="trSnapOnce('face', this)">📸 Chụp 1 ảnh</button></div>
         <div class="tr-cam-err" id="trCamErrFace"></div>
         <div class="tr-btns">
           <button class="btn-navy" onclick="document.getElementById('trUpFace').click()">⬆️ Tải ảnh lên</button>
@@ -916,17 +917,18 @@ body{background:radial-gradient(1200px 620px at 50% -10%, #123064 0%, #04081A 62
       </div>
       <div class="tr-class desk">
         <div class="tr-class-head"><span class="dot" style="background:#FB923C"></span><input id="trNameDesk" value="Bàn ghế" onchange="trRename('desk', this.value)" aria-label="Tên lớp 2"><span class="tr-cnt" id="trCntDesk">0 / 6 ảnh</span></div>
-        <div class="tr-view" id="trViewDeskBox">
+        <div class="tr-view" id="trViewDeskBox" onclick="trViewClick('desk')" title="Bấm để bật camera" style="cursor:pointer">
           <video class="tr-view-video" id="trViewDesk" autoplay playsinline muted></video>
-          <div class="tr-view-off" id="trViewOffDesk">📷 Chưa bật camera — bấm “Bật camera” ở cột phải</div>
+          <div class="tr-view-off" id="trViewOffDesk">📷 Chưa bật camera — bấm giữ để chụp, camera sẽ tự bật</div>
           <div class="tr-view-flash" id="trViewFlashDesk"></div>
           <div class="tr-view-tag">Khung ngắm — lớp “Bàn ghế”</div>
         </div>
         <div class="tr-thumbs" id="trThumbsDesk"></div>
-        <div class="tr-hold-hint">Giữ chuột (hoặc giữ tay) để chụp liên tiếp — thả ra là dừng. Mỗi 0,5 giây chụp 1 ảnh.</div>
+        <div class="tr-hold-hint">Giữ chuột (hoặc giữ tay) để chụp liên tiếp — thả ra là dừng. Mỗi 0,5 giây chụp 1 ảnh. Bấm 1 cái cũng chụp được 1 ảnh — camera tự bật khi bấm.</div>
         <div class="tr-btns">
           <button class="tr-hold tr-hold-big" id="trHoldDesk" onpointerdown="trHoldStart('desk', this)" onpointerup="trHoldStop()" onpointerleave="trHoldStop()" oncontextmenu="return false"><svg class="tr-ring" viewBox="0 0 44 44"><circle class="tr-ring-bg" cx="22" cy="22" r="19"></circle><circle class="tr-ring-fg" id="trRingDesk" cx="22" cy="22" r="19"></circle></svg><span class="tr-hold-label">📷 GIỮ ĐỂ CHỤP</span><span class="tr-hold-count" id="trHoldCntDesk"></span></button>
         </div>
+        <div class="tr-btns"><button class="btn-green" id="trSnapDesk" onclick="trSnapOnce('desk', this)">📸 Chụp 1 ảnh</button></div>
         <div class="tr-cam-err" id="trCamErrDesk"></div>
         <div class="tr-btns">
           <button class="btn-navy" onclick="document.getElementById('trUpDesk').click()">⬆️ Tải ảnh lên</button>
@@ -993,7 +995,7 @@ body{background:radial-gradient(1200px 620px at 50% -10%, #123064 0%, #04081A 62
         <div class="tr-class-head"><span class="dot" style="background:#34D399"></span><b style="font-size:18px">Giọng thầy</b></div>
         <div class="tr-cnt" id="trAudCntTeacher">Đã thu: 0 mẫu • Độ to trung bình: —</div>
         <div class="tr-aud-samples" id="trAudSamplesTeacher"></div>
-        <div class="tr-hold-hint">Giữ chuột (hoặc giữ tay) để thu liên tiếp — thả ra là dừng. Sóng âm chạy thật ở cột giữa.</div>
+        <div class="tr-hold-hint">Giữ chuột (hoặc giữ tay) để thu liên tiếp — thả ra là dừng. Mic tự bật khi bấm giữ; sóng âm chạy thật ở cột giữa.</div>
         <div class="tr-btns">
           <button class="tr-hold tr-hold-big" id="trAudHoldTeacher" onpointerdown="trAudHoldStart('teacher', this)" onpointerup="trAudHoldStop()" onpointerleave="trAudHoldStop()" oncontextmenu="return false"><svg class="tr-ring" viewBox="0 0 44 44"><circle class="tr-ring-bg" cx="22" cy="22" r="19"></circle><circle class="tr-ring-fg" id="trAudRingTeacher" cx="22" cy="22" r="19"></circle></svg><span class="tr-hold-label">🎙️ GIỮ ĐỂ THU GIỌNG THẦY</span><span class="tr-hold-count" id="trAudHoldCntTeacher"></span></button>
         </div>
@@ -1006,7 +1008,7 @@ body{background:radial-gradient(1200px 620px at 50% -10%, #123064 0%, #04081A 62
         <div class="tr-class-head"><span class="dot" style="background:#94A3B8"></span><b style="font-size:18px">Tiếng ồn</b></div>
         <div class="tr-cnt" id="trAudCntNoise">Đã thu: 0 mẫu • Độ to trung bình: —</div>
         <div class="tr-aud-samples" id="trAudSamplesNoise"></div>
-        <div class="tr-hold-hint">Giữ chuột (hoặc giữ tay) để thu liên tiếp — thả ra là dừng. Sóng âm chạy thật ở cột giữa.</div>
+        <div class="tr-hold-hint">Giữ chuột (hoặc giữ tay) để thu liên tiếp — thả ra là dừng. Mic tự bật khi bấm giữ; sóng âm chạy thật ở cột giữa.</div>
         <div class="tr-btns">
           <button class="tr-hold tr-hold-big" id="trAudHoldNoise" onpointerdown="trAudHoldStart('noise', this)" onpointerup="trAudHoldStop()" onpointerleave="trAudHoldStop()" oncontextmenu="return false"><svg class="tr-ring" viewBox="0 0 44 44"><circle class="tr-ring-bg" cx="22" cy="22" r="19"></circle><circle class="tr-ring-fg" id="trAudRingNoise" cx="22" cy="22" r="19"></circle></svg><span class="tr-hold-label">🎙️ GIỮ ĐỂ THU TIẾNG ỒN</span><span class="tr-hold-count" id="trAudHoldCntNoise"></span></button>
         </div>
@@ -1708,7 +1710,7 @@ async function startTeacherCam() {
     document.getElementById("btnCamDark").disabled = false;
     document.getElementById("btnCamOn").disabled = true;
   } catch (e) {
-    st.textContent = "⚠️ Máy này không mở được camera (" + (e.name || "lỗi") + ") — cứ dùng ảnh mẫu, bài vẫn chạy đủ.";
+    st.textContent = trCamErrText(e) + " — cứ dùng ảnh mẫu, bài vẫn chạy đủ.";
   }
 }
 function stopTeacherCam() {
@@ -1717,8 +1719,6 @@ function stopTeacherCam() {
   v.style.display = "none"; v.srcObject = null;
   document.getElementById("camStatus").textContent = "Đã tắt camera.";
   document.getElementById("btnCamOn").disabled = false;
-  document.getElementById("btnCamBright").disabled = true;
-  document.getElementById("btnCamDark").disabled = true;
 }
 async function captureOneFrame() {
   const v = document.getElementById("camVideo2");
@@ -1737,9 +1737,13 @@ function addTeacherPhoto(fr, label) {
 }
 async function captureTeacherPhase(phase) {
   if (teacherBusy) return;
-  if (!camStream2) { toast("Bật camera trước đã."); return; }
-  teacherBusy = true;
   const st = document.getElementById("camStatus");
+  if (!camStream2) {
+    st.textContent = "⏳ Đang bật camera — bấm Cho phép khi trình duyệt hỏi…";
+    await startTeacherCam();
+    if (!camStream2) return;
+  }
+  teacherBusy = true;
   try {
     if (phase === 1) {
       train.face = []; fixedDone = false;
@@ -2105,24 +2109,122 @@ function trSnapFrame(cls, fromHold) {
   img.src = url;
   return true;
 }
-function trHoldStart(cls, btn) {
+/* ---------- v6 — CAMERA TỰ BẬT: bấm giữ / bấm chụp / bấm khung ngắm đều tự bật camera ---------- */
+var trCamPromise = null;
+function trCamErrText(e) {
+  var n = (e && e.name) || "";
+  if (n === "NotAllowedError" || n === "SecurityError")
+    return "⛔ Trình duyệt đang chặn camera cho trang này — bấm biểu tượng camera trên thanh địa chỉ → chọn Cho phép, rồi bấm lại.";
+  if (n === "NotFoundError" || n === "OverconstrainedError")
+    return "📷 Máy này không tìm thấy camera — dùng “Tải ảnh lên” để nạp ảnh.";
+  if (n === "NotReadableError")
+    return "📷 Camera đang bị chương trình khác dùng (Zoom/Meet/Teams…) — tắt chương trình đó rồi bấm lại.";
+  return "⚠️ Không mở được camera (" + (n || "lỗi") + ") — thử bấm lại, hoặc dùng “Tải ảnh lên”.";
+}
+async function trEnsureCam() {
+  if (trStream) return true;
+  if (trCamPromise) return trCamPromise;
+  trCamPromise = (async function () {
+    try {
+      trStream = await navigator.mediaDevices.getUserMedia({ video: { width: { ideal: 640 }, height: { ideal: 480 } } });
+      var v = document.getElementById("trVideo");
+      if (v) v.srcObject = trStream;
+      var btn = document.getElementById("trCamBtn");
+      if (btn) btn.textContent = "❌ Tắt camera";
+      var st = document.getElementById("trPrevStatus");
+      if (st) st.textContent = "Camera đang bật — đưa mặt hoặc bàn ghế vào, thanh % sẽ chạy theo thời gian thực.";
+      trMirrorViews();
+      return true;
+    } catch (e) {
+      trStream = null;
+      var msg = trCamErrText(e);
+      var st2 = document.getElementById("trPrevStatus");
+      if (st2) st2.textContent = msg;
+      var ef = document.getElementById("trCamErrFace"), ed = document.getElementById("trCamErrDesk");
+      if (ef) ef.textContent = msg;
+      if (ed) ed.textContent = msg;
+      toast(msg);
+      return false;
+    } finally {
+      trCamPromise = null;
+    }
+  })();
+  return trCamPromise;
+}
+async function trWaitVideoReady(cls) {
+  for (var i = 0; i < 25; i++) {
+    var v = document.getElementById(cls === "face" ? "trViewFace" : "trViewDesk") || document.getElementById("trVideo");
+    if (v && v.readyState >= 2 && v.videoWidth > 0) return true;
+    await trSleep(100);
+  }
+  return false;
+}
+async function trViewClick(cls) {
+  if (trStream) return;
+  var err = document.getElementById(cls === "face" ? "trCamErrFace" : "trCamErrDesk");
+  if (err) err.textContent = "⏳ Đang bật camera…";
+  var ok = await trEnsureCam();
+  if (ok && err) err.textContent = "";
+}
+async function trSnapOnce(cls, btn) {
   var err = document.getElementById(cls === "face" ? "trCamErrFace" : "trCamErrDesk");
   if (err) err.textContent = "";
-  if (!trStream) {
-    if (err) err.textContent = "⚠️ Chưa có camera — bấm “📷 Bật camera” ở cột phải, rồi giữ nút này để chụp.";
-    toast("Chưa có camera — bật camera ở cột phải trước đã.");
+  var old = btn ? btn.textContent : "";
+  if (btn) { btn.disabled = true; btn.textContent = "⏳ Đang bật camera…"; }
+  var ok = await trEnsureCam();
+  if (!ok) { if (btn) { btn.disabled = false; btn.textContent = old; } return; }
+  if (btn) btn.textContent = "⏳ Đang chụp…";
+  var ready = await trWaitVideoReady(cls);
+  if (ready && trSnapFrame(cls, false)) {
+    toast("Đã chụp 1 ảnh vào lớp “" + CLASSES[cls].name + "”.");
+  } else if (err) {
+    err.textContent = "⚠️ Camera chưa kịp mở hình — thử bấm lại.";
+  }
+  if (btn) { btn.disabled = false; btn.textContent = old; }
+}
+var trHoldToken = 0;
+var trHoldPendingToken = 0;
+var trHoldReleased = false;
+async function trHoldStart(cls, btn) {
+  var err = document.getElementById(cls === "face" ? "trCamErrFace" : "trCamErrDesk");
+  if (err) err.textContent = "";
+  if (trHoldTimer) return;
+  var myToken = ++trHoldToken;
+  trHoldPendingToken = myToken;
+  trHoldReleased = false;
+  btn.classList.add("holding");
+  var lab = btn.querySelector(".tr-hold-label");
+  if (lab) lab.textContent = "⏳ ĐANG BẬT CAMERA…";
+  var ok = await trEnsureCam();
+  trHoldPendingToken = 0;
+  if (!ok) {
+    btn.classList.remove("holding");
+    if (lab) lab.textContent = "📷 GIỮ ĐỂ CHỤP";
     return;
   }
-  if (trHoldTimer) return;
+  if (myToken !== trHoldToken) {
+    /* Đã thả tay trong lúc chờ camera mở (kể cả bấm nhanh 1 cái):
+       vẫn chụp đúng 1 ảnh, thay vì không chụp được gì. */
+    btn.classList.remove("holding");
+    if (lab) lab.textContent = "📷 GIỮ ĐỂ CHỤP";
+    if (!trHoldTimer && trHoldReleased && trOpen) {
+      var ready = await trWaitVideoReady(cls);
+      if (ready && trSnapFrame(cls, false)) {
+        toast("Camera đã bật — đã chụp 1 ảnh vào lớp “" + CLASSES[cls].name + "”. Giữ nút để chụp liên tiếp.");
+      }
+    }
+    return;
+  }
   trHoldCls = cls;
-  btn.classList.add("holding");
-  var lab = btn.querySelector(".tr-hold-label"); if (lab) lab.textContent = "🔴 ĐANG CHỤP… THẢ RA ĐỂ DỪNG";
+  if (lab) lab.textContent = "🔴 ĐANG CHỤP… THẢ RA ĐỂ DỪNG";
   trUpdateRing(cls, 0);
   trSnapFrame(cls, true);
   trHoldTimer = setInterval(function () { trSnapFrame(cls, true); }, 500);
   trBeep();
 }
 function trHoldStop() {
+  if (trHoldPendingToken) trHoldReleased = true;
+  trHoldToken++;
   if (trHoldTimer) { clearInterval(trHoldTimer); trHoldTimer = null; }
   document.querySelectorAll("#trBodyImg .tr-hold.holding").forEach(function (b) {
     b.classList.remove("holding");
@@ -2137,6 +2239,7 @@ function trHoldStop() {
   }
 }
 
+/* ---------- CỘT GIỮA
 /* ---------- CỘT GIỮA: HUẤN LUYỆN NHÌN THẤY ĐƯỢC ---------- */
 async function trTrain() {
   if (trTraining) return;
@@ -2164,7 +2267,7 @@ async function trTrain() {
   }
   trTrained = true; trTraining = false;
   btn.disabled = false; btn.textContent = "▶️ HUẤN LUYỆN";
-  step.textContent = "✅ Đã huấn luyện xong — " + total + " chấm đã lưu (" + train.face.length + " chấm “" + CLASSES.face.name + "” • " + train.desk.length + " chấm “" + CLASSES.desk.name + "”). Bây giờ đưa mặt hoặc bàn ghế vào camera ở cột phải để xem trực tiếp.";
+  step.textContent = "✅ Đã huấn luyện xong — " + total + " chấm đã lưu (" + train.face.length + " chấm “" + CLASSES.face.name + "” • " + train.desk.length + " chấm “" + CLASSES.desk.name + "”). Bây giờ đưa mặt hoặc bàn ghế vào camera để xem trực tiếp.";
   drawMap();
   toast("Đã huấn luyện xong — " + total + " chấm đã lưu.");
 }
@@ -2178,18 +2281,7 @@ async function trToggleCam() {
     trMirrorViews();
     return;
   }
-  try {
-    trStream = await navigator.mediaDevices.getUserMedia({ video: { width: { ideal: 640 }, height: { ideal: 480 } } });
-    v.srcObject = trStream; btn.textContent = "❌ Tắt camera";
-    st.textContent = "Camera đang bật — đưa mặt hoặc bàn ghế vào, thanh % sẽ chạy theo thời gian thực.";
-    trMirrorViews();
-  } catch (e) {
-    st.textContent = "⚠️ Máy này không mở được camera (" + (e.name || "lỗi") + ") — dùng 3 nút thử ảnh bên dưới, bài vẫn chạy đủ.";
-    var msg = "⚠️ Chưa có camera (" + (e.name || "lỗi") + ") — bấm “Bật camera” để thử lại, hoặc dùng “Tải ảnh lên”.";
-    var ef = document.getElementById("trCamErrFace"), ed = document.getElementById("trCamErrDesk");
-    if (ef) ef.textContent = msg;
-    if (ed) ed.textContent = msg;
-  }
+  await trEnsureCam();
 }
 function trFrameFeatures() {
   var v = document.getElementById("trVideo");
@@ -2291,6 +2383,14 @@ function trAudVol(an) {
   for (var i = 0; i < buf.length; i++) { var v = (buf[i] - 128) / 128; sum += v * v; }
   return Math.min(100, Math.round(Math.sqrt(sum / buf.length) * 100 * 2.2));
 }
+function trAudMicErrText(e) {
+  var n = (e && e.name) || "";
+  if (n === "NotAllowedError" || n === "SecurityError")
+    return "⛔ Trình duyệt đang chặn mic cho trang này — bấm biểu tượng mic/camera trên thanh địa chỉ → chọn Cho phép, rồi giữ lại.";
+  if (n === "NotFoundError")
+    return "🎙️ Máy này không tìm thấy mic — kiểm tra mic đã cắm/bật chưa.";
+  return "⚠️ Không mở được mic (" + (n || "lỗi") + ").";
+}
 async function trAudEnsureMic() {
   if (trAudAnalyser) return true;
   try {
@@ -2302,15 +2402,23 @@ async function trAudEnsureMic() {
     trAudAnalyser = an; trAudWaveStart();
     return true;
   } catch (e) {
-    toast("⚠️ Không mở được mic (" + (e.name || "lỗi") + ").");
+    var msg = trAudMicErrText(e);
+    window.__trAudMicErr = msg;
+    toast(msg);
     return false;
   }
 }
+var trAudHoldToken = 0;
+var trAudHoldPendingToken = 0;
 async function trAudHoldStart(kind, btn) {
   var err = document.getElementById(kind === "teacher" ? "trAudErrTeacher" : "trAudErrNoise");
   if (err) err.textContent = "";
+  var myToken = ++trAudHoldToken;
+  trAudHoldPendingToken = myToken;
   var ok = await trAudEnsureMic();
-  if (!ok) { if (err) err.textContent = "⚠️ Chưa có mic — cho phép dùng mic rồi giữ nút này để thu."; return; }
+  trAudHoldPendingToken = 0;
+  if (myToken !== trAudHoldToken) return; // đã thả tay trong lúc chờ mic mở
+  if (!ok) { if (err) err.textContent = window.__trAudMicErr || "⚠️ Chưa có mic — cho phép dùng mic rồi giữ nút này để thu."; return; }
   btn.classList.add("holding");
   var lab = btn.querySelector(".tr-hold-label"); if (lab) lab.textContent = "🔴 ĐANG THU… THẢ RA ĐỂ DỪNG";
   trAudRec = { kind: kind, vols: [] };
@@ -2319,6 +2427,7 @@ async function trAudHoldStart(kind, btn) {
   }, 200);
 }
 function trAudHoldStop() {
+  if (trAudHoldPendingToken) trAudHoldToken++;
   if (trAudRecTimer) { clearInterval(trAudRecTimer); trAudRecTimer = null; }
   document.querySelectorAll("#trBodyAud .tr-hold.holding").forEach(function (b) {
     b.classList.remove("holding");

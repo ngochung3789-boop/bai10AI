@@ -8,12 +8,20 @@ Trang live: https://ngochung3789-boop.github.io/bai10AI/
 
 ## Bản đang chạy (live)
 
-- **index.html — v5** (12/11/2026): 7 slide vừa màn hình TV + hệ thống huấn luyện
+- **index.html — v6** (12/11/2026): 7 slide vừa màn hình TV + hệ thống huấn luyện
   3 cột kiểu Teachable Machine (tab Hình ảnh / Âm thanh).
+  - **Camera/mic tự bật — SỬA LỖI v5:** bấm/giữ nút chụp là camera tự bật ngay,
+    không phải bật ở chỗ khác trước. Bấm 1 cái vào nút "📸 Chụp 1 ảnh" cũng chụp
+    được 1 ảnh; bấm vào chính khung ngắm cũng bật camera. Giữ thu giọng thì mic
+    tự bật. Thả tay trong lúc đang chờ bật thì hủy, không chụp/thu ảnh rác.
+    Nút "📸 Chụp 3 ảnh đủ sáng" / "🌑 Chụp 3 ảnh tối" ở slide 2 cũng tự bật camera.
+  - **Báo lỗi rõ ràng:** bị chặn quyền thì app báo đỏ ngay tại chỗ —
+    "Trình duyệt đang chặn camera cho trang này — bấm biểu tượng camera trên
+    thanh địa chỉ → chọn Cho phép, rồi bấm lại." Không có camera thì báo
+    "Máy này không tìm thấy camera — dùng Tải ảnh lên."
   - **Giữ để chụp / giữ để thu:** nút to, mỗi lớp có khung ngắm riêng
     (ảnh: video webcam; giọng: sóng âm chạy thật + độ to). Giữ là chụp/thu liên tiếp,
     thả ra là dừng; vòng tiến trình chạy, ảnh/mẫu bay vào lưới, số đếm tăng ngay.
-    Chưa có camera/mic thì app báo đỏ rõ ràng, không im lặng.
   - **Mạng nơ-ron trong hộp đen:** sơ đồ 3 lớp (vào 2 → ẩn 4 → ra 2) ở slide 4
     và trong cột giữa hệ thống huấn luyện, cả hai tab Hình ảnh và Âm thanh.
     Trọng số tính thật từ dữ liệu (quy tắc delta: w mới = w cũ + 0,05 × tín hiệu vào
@@ -27,13 +35,13 @@ Trang live: https://ngochung3789-boop.github.io/bai10AI/
     rất tối 51% sai; bàn ghế 98% đúng. Sau khi thêm 3 ảnh tối: thiếu sáng 97% đúng,
     rất tối 86% đúng. (Số % là mức chắc chắn tính từ khoảng cách các chấm.)
   - Ảnh lớp "Thầy Hưng" hiện dùng ảnh mẫu (đã ghi nhãn trong app). Muốn dùng ảnh thật:
-    thay 1 file `assets_v5/anh-thay-hung.jpg` (giữ đúng tên file) hoặc chụp bằng webcam
+    thay 1 file `assets_v6/anh-thay-hung.jpg` (giữ đúng tên file) hoặc chụp bằng webcam
     trong app.
 
 ## Các bản lưu
 
-- **bai10AI-v3.html** — v3 (12/11/2026): 7 slide, hộp đen 3D, nhận diện giọng nói.
-- **bai10AI-v4.html** — v4 (12/11/2026): thêm hệ thống huấn luyện 3 cột kiểu Teachable Machine.
+- **bai10AI-v5.html** — v5 (12/11/2026): nút Giữ chụp chưa tự bật camera
+  (phải bấm "Bật camera" ở cột phải trước) — đã sửa ở v6.
 
 ## Kịch bản giải thích
 
