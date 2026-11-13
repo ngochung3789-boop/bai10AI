@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Học Nhìn Ảnh v9 — 7 slide + Hệ thống huấn luyện kiểu Teachable Machine — Mở hộp đen xem máy học</title>
+<title>AI Học Nhìn Ảnh v9.1 — 7 slide + Hệ thống huấn luyện kiểu Teachable Machine — Mở hộp đen xem máy học</title>
 <style>
 
 /* ================= PHONG CÁCH: VIỄN TƯỞNG (SCI-FI) — nền vũ trụ navy tối, viền cyan phát sáng, điểm nhấn cam ================= */
@@ -636,7 +636,7 @@ button[onclick*="trUpDesk"], button[onclick*="trClear('desk')"], button[onclick*
 .fl-ctrl .btn-ghost{font-size:20px; padding:10px 18px;}
 .fl-count{margin-left:auto; font-size:20px; color:#BAE6FD;}
 
-/* ===== v9: wizard 3 bước chụp + huấn luyện ===== */
+/* ===== v9.1: wizard 3 bước chụp + huấn luyện ===== */
 .wz-steps{display:flex; gap:10px; margin:10px 0 14px; flex-wrap:wrap;}
 .wz-chip{flex:1; min-width:180px; background:#0B1B3D; color:#BAE6FD; border:2px solid #1E3A5F; border-radius:14px; padding:12px 14px; font-size:19px; font-weight:800; text-align:left; cursor:pointer;}
 .wz-chip.on{border-color:#F59E0B; background:#1E293B; color:#fff; box-shadow:0 0 0 2px rgba(245,158,11,.35);}
@@ -664,7 +664,7 @@ button[onclick*="trUpDesk"], button[onclick*="trClear('desk')"], button[onclick*
 .wz-verdict.bad{background:#7F1D1D; color:#fff; border:3px solid #F87171;}
 .wz-log{max-width:640px; margin:8px auto; font-size:16px; color:#94A3B8; line-height:1.5;}
 .wz-log div{border-top:1px solid #1E3A5F; padding:5px 2px;}
-/* ===== v9: tab lệnh lớp học ===== */
+/* ===== v9.1: tab lệnh lớp học ===== */
 .cmd-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px; flex:1; min-height:0;}
 .cmd-panel{background:#0B1B3D; border-radius:16px; padding:16px; border:2px solid #1E3A5F;}
 .cmd-panel h3{font-size:22px; color:#fff; margin:0 0 8px;}
@@ -697,7 +697,7 @@ button[onclick*="trUpDesk"], button[onclick*="trClear('desk')"], button[onclick*
   <section class="slide active" id="slide-1">
     <div class="slide-head"><span class="slide-kicker">SLIDE 1 / 7 • MỞ ĐẦU</span>
       <h2>🤖 AI HỌC NHÌN ẢNH — MỞ HỘP ĐEN RA XEM</h2></div>
-    <p class="slide-sub">Tiết 9 • Lớp 7 • Mã 7.C4.1 — Đạo đức dữ liệu huấn luyện AI &nbsp;•&nbsp; Trình chiếu kiểu Flash (HTML5 một file, chạy offline, không cần cài đặt) • Bản v9: chụp 10 ảnh theo 3 bước to rõ + lệnh giọng “đứng dậy” + lưu dữ liệu để lần sau mở ra dùng ngay</p>
+    <p class="slide-sub">Tiết 9 • Lớp 7 • Mã 7.C4.1 — Đạo đức dữ liệu huấn luyện AI &nbsp;•&nbsp; Trình chiếu kiểu Flash (HTML5 một file, chạy offline, không cần cài đặt) • Bản v9.1: mở ra là thấy ngay 3 bước huấn luyện</p>
     <div class="flow" id="flow">
       <div class="station" id="st1" onclick="goSlide(2)"><div class="num">1</div><h3>ẢNH VÀO</h3><p>Nạp ảnh vào hộp</p></div>
       <div class="connector" id="c1"></div>
@@ -1195,7 +1195,7 @@ const CLASSES = {
 };
 /* 6 biến thể mỗi lớp: [độ sáng, độ cắt khung] */
 const VARIANTS = [[0.92,1.0],[1.0,1.0],[1.08,1.0],[0.95,0.85],[1.03,0.85],[1.0,0.85]];
-const FACE_MAX = 10, DESK_MAX = 6; /* v9: lớp Thầy Hưng đúng 10 ảnh, lớp Bàn ghế 6 ảnh */
+const FACE_MAX = 10, DESK_MAX = 6; /* v9.1: lớp Thầy Hưng đúng 10 ảnh, lớp Bàn ghế 6 ảnh */
 function classMax(cls){ return cls === "face" ? FACE_MAX : DESK_MAX; }
 /* 3 ảnh tối để sửa dữ liệu lệch */
 const DIM_FIX = [[0.35,1.0],[0.42,1.0],[0.32,1.0]];
@@ -1934,7 +1934,7 @@ function fixData() {
   const beforeDim = predFor("dim"), beforeVery = predFor("verydim");
   const srcImg = window._teacherImg || null;
   var _fixFull = train.face.length >= FACE_MAX;
-  if (_fixFull) train.face.splice(train.face.length - 3, 3); /* v9: lớp đã đủ 10 ảnh → đổi 3 ảnh cuối thành ảnh tối, giữ đúng 10 ảnh */
+  if (_fixFull) train.face.splice(train.face.length - 3, 3); /* v9.1: lớp đã đủ 10 ảnh → đổi 3 ảnh cuối thành ảnh tối, giữ đúng 10 ảnh */
   DIM_FIX.forEach(function (v) {
     let item;
     if (srcImg) {
@@ -2132,7 +2132,7 @@ function trPreloadDesk(){
 }
 
 
-function openTrainer() {
+function openTrainer(silent) {
   trOpen = true;
   document.getElementById("deck").style.display = "none";
   document.querySelector(".deck-nav").style.display = "none";
@@ -2141,7 +2141,7 @@ function openTrainer() {
   trPreloadDesk();
   if (!deskPreloaded) { setTimeout(function(){ if (trOpen) { trPreloadDesk(); trSync(); } }, 1200); }
   trSync();
-  toast("Đã mở hệ thống huấn luyện.");
+  if (!silent) toast("Đã mở hệ thống huấn luyện.");
 }
 function closeTrainer() {
   trOpen = false;
@@ -2174,7 +2174,7 @@ function trShowTab(tab) {
 
 /* ---------- CỘT TRÁI: lớp + ảnh ---------- */
 function renderTrainer() {
-  /* v9: tab Hình ảnh cũ (3 cột) đã thay bằng wizard 3 bước — chỉ cập nhật wizard + số chấm */
+  /* v9.1: tab Hình ảnh cũ (3 cột) đã thay bằng wizard 3 bước — chỉ cập nhật wizard + số chấm */
   if (typeof wzRender === "function") wzRender();
   var total = train.face.length + train.desk.length;
   var mc = document.getElementById("wzMapInfo");
@@ -3187,7 +3187,7 @@ function nwRender(){
 </div>
 
 <script>
-/* ================= v9: lưu dữ liệu + wizard 3 bước + lệnh giọng "đứng dậy" ================= */
+/* ================= v9.1: lưu dữ liệu + wizard 3 bước + lệnh giọng "đứng dậy" ================= */
 /* --- IndexedDB: DB "bai10ai-v9", store "kv" --- */
 var idbDB = null, idbPromise = null;
 function idbOpen(){
@@ -3600,9 +3600,12 @@ function cmdListenStop(){
   var b2 = document.getElementById("cmdListenStopBtn"); if (b2) b2.disabled = true;
 }
 
-/* --- v9: tải lại dữ liệu đã lưu khi mở app --- */
+/* --- v9.1: tải lại dữ liệu đã lưu khi mở app --- */
 restoreFace10();
 cmdRestoreVoice();
+
+/* --- v9.1: mở app là thấy ngay hệ thống huấn luyện 3 bước (không qua slide giới thiệu) --- */
+openTrainer(true);
 </script>
 
 </body>
