@@ -8,7 +8,33 @@ Trang live: https://ngochung3789-boop.github.io/bai10AI/
 
 ## Bản đang chạy (live)
 
-- **index.html — v7** (12/11/2026): 7 slide vừa màn hình TV + hệ thống huấn luyện
+- **index.html — v8** (13/11/2026): thêm màn **🌊 Xem luồng chạy** — thầy bấm 1 nút
+  là thấy ảnh đi đâu, hộp đen làm gì, rồi ra kết quả gì. Chỉ 4 ô to xếp ngang,
+  nối bằng mũi tên to, mỗi ô 1 hình + 1 câu ngắn, chữ to, không số liệu phụ,
+  không công thức, không nơ-ron.
+  - Hai chế độ chuyển bằng 2 nút to trên cùng:
+    **📥 LÚC HỌC — nạp ảnh:** ① Chụp ảnh → ② Ảnh thành 2 con số (Độ sáng,
+    Độ tương phản) → ③ 2 con số thành 1 chấm, cất vào hộp đen → ④ Đủ 12 chấm
+    là học xong.
+    **🔍 LÚC ĐOÁN — thử ảnh mới:** ① Chụp ảnh mới → ② Ảnh thành 2 con số →
+    ③ Hộp đen đo khoảng cách tới 12 chấm, lấy 3 chấm gần nhất → ④ Bên nào
+    đông hơn thì đoán bên đó ("Đây là mặt thầy" hay "Không phải mặt thầy" + %).
+  - Bấm nút **▶ Chạy** thì 1 chấm sáng chạy dọc theo mũi tên, mỗi ô sáng lên
+    lần lượt, mỗi ô sáng lên thì hiện đúng 1 câu giải thích ngắn bên dưới
+    (≤ 12 chữ). Bấm vào 1 ô thì chỉ ô đó sáng + hiện câu của ô đó.
+    Nút **↺ Chạy lại** chạy lại từ ô đầu.
+  - Nút **🌊 Xem luồng chạy** đặt ở slide 2 và trong hệ thống huấn luyện
+    (cạnh nút "Mở hộp đen — xem nơ-ron hoạt động").
+  - Số liệu trong màn này lấy thật từ logic sẵn có trong app (2 con số tính
+    từ ảnh, 3 chấm gần nhất, % chắc chắn) — không bịa số. Chế độ xem nơ-ron
+    của v7 vẫn giữ nguyên; 7 slide, hệ thống huấn luyện và các số liệu kiểm
+    chứng 98/64/51 → 97/86 không đổi.
+  - Muốn dùng ảnh thật: thay 1 file `assets_v8/anh-thay-hung.jpg`
+    (giữ đúng tên file) hoặc chụp bằng webcam trong app.
+
+## Bản v7 (12/11/2026)
+
+- **bai10AI-v7.html — v7**: 7 slide vừa màn hình TV + hệ thống huấn luyện
   3 cột kiểu Teachable Machine (tab Hình ảnh / Âm thanh).
   - **ĐƠN GIẢN HÓA — chỉ chụp mặt thầy:** lớp "Bàn ghế" đã nạp sẵn 6 ảnh mẫu
     ngay khi mở hệ thống huấn luyện (đúng 6 biến thể như slide 2), thầy không
@@ -65,6 +91,8 @@ Trang live: https://ngochung3789-boop.github.io/bai10AI/
     trong app.
 
 ## Các bản lưu
+
+- **bai10AI-v7.html** — v7 (12/11/2026): chỉ cần chụp mặt thầy; xem nơ-ron 4 bước chậm.
 
 - **bai10AI-v6.html** — v6 (12/11/2026): bấm/giữ chụp tự bật camera; vẫn bắt
   nạp ảnh cả 2 lớp mới huấn luyện được — đã đơn giản hóa ở v7.

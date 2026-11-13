@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Học Nhìn Ảnh v6 — 7 slide + Hệ thống huấn luyện kiểu Teachable Machine — Mở hộp đen xem máy học</title>
+<title>AI Học Nhìn Ảnh v8 — 7 slide + Hệ thống huấn luyện kiểu Teachable Machine — Mở hộp đen xem máy học</title>
 <style>
 
 /* ================= PHONG CÁCH: VIỄN TƯỞNG (SCI-FI) — nền vũ trụ navy tối, viền cyan phát sáng, điểm nhấn cam ================= */
@@ -609,6 +609,32 @@ button[onclick*="trUpDesk"], button[onclick*="trClear('desk')"], button[onclick*
 .nw-ctrl #nwNext{font-size:19px; padding:10px 22px;}
 .nw-count{font-size:16px; font-weight:800; color:#fff; margin-left:auto;}
 .nw-bound{font-size:14px; color:#FDE68A; line-height:1.4; margin:12px 0 0;}
+
+/* --- v8: màn xem luồng chạy — 4 ô to, cực đơn giản --- */
+#flowWatch{position:fixed; inset:0; z-index:100; display:none; align-items:center; justify-content:center; background:rgba(2,6,23,.96); color:var(--ink); padding:14px;}
+.fl-box{width:min(1220px,100%); max-height:100%; overflow:auto; background:radial-gradient(900px 500px at 50% -10%, #123064 0%, #04081A 65%), #04081A; border:2px solid var(--cyan); border-radius:18px; padding:14px 20px 18px;}
+.fl-head{display:flex; align-items:flex-start; justify-content:space-between; gap:12px;}
+.fl-kicker{font-size:14px; font-weight:800; letter-spacing:1px; color:var(--cyan);}
+.fl-title{font-size:30px; color:#fff; margin:2px 0 0;}
+.fl-modes{display:flex; gap:12px; margin-top:12px;}
+.fl-mode{flex:1; font-size:24px; font-weight:800; padding:12px; border-radius:14px; border:3px solid #38BDF8; background:#0B1B3D; color:#E0F2FE; cursor:pointer;}
+.fl-mode.active{background:#0EA5E9; color:#fff; border-color:#FDE68A; box-shadow:0 0 18px rgba(56,189,248,.6);}
+.fl-track{position:relative; margin-top:22px;}
+.fl-row{display:flex; align-items:stretch; gap:6px;}
+.fl-cell{flex:1; background:#0B1B3D; border:3px solid #1E3A5F; border-radius:18px; padding:16px 10px 14px; text-align:center; cursor:pointer; transition:transform .3s, border-color .3s, box-shadow .3s, background .3s; min-height:250px; display:flex; flex-direction:column; align-items:center; justify-content:flex-start;}
+.fl-cell .fl-ico{font-size:72px; line-height:1.1;}
+.fl-cell .fl-name{font-size:30px; font-weight:800; color:#fff; line-height:1.2; margin-top:8px;}
+.fl-cell .fl-sub{font-size:22px; color:#BAE6FD; line-height:1.35; margin-top:8px;}
+.fl-cell.on{border-color:#F59E0B; background:#1C2A4A; box-shadow:0 0 26px rgba(245,158,11,.75); transform:scale(1.04);}
+.fl-cell.done{border-color:#34D399;}
+.fl-arrow{align-self:center; font-size:48px; color:#22D3EE; flex:0 0 34px; text-align:center;}
+.fl-arrow.on{color:#F59E0B; text-shadow:0 0 14px rgba(245,158,11,.9);}
+.fl-dot{position:absolute; top:-14px; width:26px; height:26px; border-radius:50%; background:#F59E0B; box-shadow:0 0 16px 4px rgba(245,158,11,.9); transform:translateX(-50%); transition:left .9s ease; z-index:2; display:none;}
+.fl-explain{margin-top:16px; background:#0B1B3D; border-left:6px solid var(--amber); border-radius:12px; padding:14px 16px; font-size:30px; line-height:1.4; color:#fff; min-height:96px;}
+.fl-ctrl{display:flex; gap:12px; margin-top:14px; align-items:center; flex-wrap:wrap;}
+.fl-ctrl .btn-green{font-size:24px; padding:12px 26px;}
+.fl-ctrl .btn-ghost{font-size:20px; padding:10px 18px;}
+.fl-count{margin-left:auto; font-size:20px; color:#BAE6FD;}
 </style>
 </head>
 <body>
@@ -683,6 +709,7 @@ button[onclick*="trUpDesk"], button[onclick*="trClear('desk')"], button[onclick*
     </div>
     <div class="row slide-actions">
       <button class="btn-green" onclick="addAllBoth()">⚡ Nạp tất cả 12 ảnh cùng lúc</button>
+      <button class="btn-amber" onclick="openFlow()">🌊 Xem luồng chạy</button>
       <button class="btn-ghost" onclick="resetAll()">↺ Làm lại từ đầu</button>
       <button class="btn-amber" onclick="goSlide(3)">Tiếp: xem máy nhận ảnh như thế nào ›</button>
     </div>
@@ -986,6 +1013,7 @@ button[onclick*="trUpDesk"], button[onclick*="trClear('desk')"], button[onclick*
       <div class="tr-progress"><div id="trProgBar"></div></div>
       <p id="trStep">Chưa huấn luyện — chụp ảnh mặt thầy rồi bấm “▶️ HUẤN LUYỆN”. Lớp bàn ghế đã có sẵn rồi.</p>
       <button class="btn-amber btn-big" id="trWatchBtn" onclick="openNnWatch()">🔍 Mở hộp đen — xem nơ-ron hoạt động</button>
+      <button class="btn-green btn-big" id="trFlowBtn" onclick="openFlow()" style="margin-top:8px">🌊 Xem luồng chạy</button>
       <div class="tr-mini-map">
         <div class="tr-mini-head">📦 Bản đồ chấm trong hộp đen — <span id="trMapCount">hộp đang trống</span></div>
         <div class="tr-map-wrap">
@@ -2849,6 +2877,135 @@ function closeNnWatch(){
   nwStopPulse(); nwAutoStop();
   document.getElementById("nnWatch").style.display = "none";
 }
+
+/* ================= v8 — XEM LUỒNG CHẠY (4 ô to, cực đơn giản) ================= */
+var flMode = 'learn', flIdx = -1, flTimer = null, flData = null;
+var FL_BOXES = {
+  learn: [
+    {ico:'📷', name:'Chụp ảnh', sub:'6 ảnh mặt thầy'},
+    {ico:'🔢', name:'Thành 2 con số', sub:''},
+    {ico:'📦', name:'Thành 1 chấm', sub:''},
+    {ico:'✅', name:'Học xong', sub:''}
+  ],
+  guess: [
+    {ico:'📷', name:'Chụp ảnh mới', sub:'1 ảnh để thử'},
+    {ico:'🔢', name:'Thành 2 con số', sub:''},
+    {ico:'📦', name:'Đo khoảng cách', sub:''},
+    {ico:'✅', name:'', sub:''}
+  ]
+};
+var FL_EXPLAIN = {
+  learn: [
+    'Thầy chụp ảnh, máy nhận ảnh đó.',
+    'Ảnh đổi thành 2 con số.',
+    '2 con số thành 1 chấm.',
+    'Đủ 12 chấm là học xong.'
+  ],
+  guess: [
+    'Chụp 1 ảnh mới để thử.',
+    'Ảnh mới cũng thành 2 con số.',
+    'Đo tới các chấm, lấy 3 chấm gần nhất.',
+    'Bên nào đông hơn thì đoán bên đó.'
+  ]
+};
+function flCompute(){
+  var f = computeFeatures(faceImg, 1.0, 1.0);
+  var p = predict(f);
+  var nb = 0, nc = 0;
+  p.near.forEach(function(n){ if(n.label === 'Thầy Hưng') nb++; else nc++; });
+  flData = {b:f.b, c:f.c, win:p.win, conf:p.conf, nearBlue:nb, nearOrange:nc,
+            total: train.face.length + train.desk.length};
+}
+function openFlow(){
+  if(train.face.length === 0 || train.desk.length === 0){
+    addAll('face'); addAll('desk');
+    toast('Đã nạp sẵn 12 ảnh mẫu để xem luồng chạy.');
+  }
+  flCompute();
+  document.getElementById('flowWatch').style.display = 'flex';
+  flSetMode(flMode);
+}
+function closeFlow(){ flStop(); document.getElementById('flowWatch').style.display = 'none'; }
+function flSetMode(m){
+  flMode = m; flStop(); flIdx = -1;
+  document.getElementById('flModeLearn').classList.toggle('active', m === 'learn');
+  document.getElementById('flModeGuess').classList.toggle('active', m === 'guess');
+  document.getElementById('flTitle').textContent = m === 'learn'
+    ? 'Lúc học: ảnh đi vào hộp đen như thế nào?'
+    : 'Lúc đoán: máy đoán ảnh mới ra sao?';
+  flRender();
+}
+function flRender(){
+  var row = document.getElementById('flRow');
+  row.innerHTML = '';
+  var boxes = FL_BOXES[flMode];
+  boxes.forEach(function(bx, i){
+    if(i > 0){
+      var ar = document.createElement('div');
+      ar.className = 'fl-arrow'; ar.id = 'flArrow' + i; ar.textContent = '➜';
+      row.appendChild(ar);
+    }
+    var cell = document.createElement('div');
+    cell.className = 'fl-cell'; cell.id = 'flCell' + i;
+    cell.onclick = (function(idx){ return function(){ flStop(); flLight(idx); }; })(i);
+    var sub = bx.sub, name = bx.name;
+    if(flMode === 'learn'){
+      if(i === 1) sub = 'Sáng ' + flData.b + ' • Tương phản ' + flData.c;
+      if(i === 2) sub = 'Trong hộp: ' + flData.total + ' chấm';
+      if(i === 3) sub = 'Hiện có ' + flData.total + ' / 12 chấm';
+    } else {
+      if(i === 1) sub = 'Sáng ' + flData.b + ' • Tương phản ' + flData.c;
+      if(i === 2) sub = '3 chấm gần nhất: ' + flData.nearBlue + ' xanh • ' + flData.nearOrange + ' cam';
+      if(i === 3){
+        name = (flData.win === 'Thầy Hưng') ? 'Đây là mặt thầy' : 'Không phải mặt thầy';
+        sub = flData.conf + '% chắc chắn';
+      }
+    }
+    cell.innerHTML = '<div class="fl-ico">' + bx.ico + '</div><div class="fl-name">' + name + '</div><div class="fl-sub">' + sub + '</div>';
+    row.appendChild(cell);
+  });
+  document.getElementById('flDot').style.display = 'none';
+  document.getElementById('flExplain').textContent = 'Bấm ▶ Chạy để xem ảnh đi đâu.';
+  document.getElementById('flCount').textContent = '';
+}
+function flLight(i){
+  flIdx = i;
+  for(var k = 0; k < 4; k++){
+    var c = document.getElementById('flCell' + k);
+    if(c){ c.classList.toggle('on', k === i); c.classList.toggle('done', k < i); }
+    var a = document.getElementById('flArrow' + k);
+    if(a) a.classList.toggle('on', k <= i);
+  }
+  var dot = document.getElementById('flDot');
+  var cell = document.getElementById('flCell' + i);
+  if(cell){
+    dot.style.display = 'block';
+    dot.style.left = (cell.offsetLeft + cell.offsetWidth / 2) + 'px';
+  }
+  document.getElementById('flExplain').textContent = FL_EXPLAIN[flMode][i];
+  document.getElementById('flCount').textContent = 'Ô ' + (i + 1) + ' / 4';
+}
+function flRunToggle(){
+  if(flTimer){ flStop(); return; }
+  if(flIdx >= 3){ flIdx = -1; }
+  document.getElementById('flRunBtn').textContent = '⏸ Dừng';
+  flLight(flIdx + 1);
+  flTimer = setInterval(function(){
+    if(flIdx >= 3){ flStop(); return; }
+    flLight(flIdx + 1);
+  }, 1600);
+}
+function flStop(){
+  if(flTimer){ clearInterval(flTimer); flTimer = null; }
+  var b = document.getElementById('flRunBtn');
+  if(b) b.textContent = '▶ Chạy';
+}
+function flReplay(){
+  flStop();
+  flIdx = -1;
+  flRunToggle();
+}
+
 function nwNext(){
   if (nwStepIdx >= 3) { closeNnWatch(); return; }
   nwStepIdx++; nwRender();
@@ -2956,6 +3113,32 @@ function nwRender(){
       <span class="nw-count" id="nwCount">Bước 1 / 4</span>
     </div>
     <p class="nw-bound">⚠️ Sơ đồ nơ-ron minh họa CÁCH mạng nơ-ron ghi nhận việc học (trọng số đổi theo dữ liệu). Máy trong app đoán bằng cách đo khoảng cách 3 chấm gần nhất (k-NN) — nơ-ron không phải bộ phân loại thật ở đây.</p>
+  </div>
+</div>
+
+<div id="flowWatch" role="dialog" aria-label="Xem luồng chạy">
+  <div class="fl-box">
+    <div class="fl-head">
+      <div>
+        <div class="fl-kicker">🌊 XEM LUỒNG CHẠY — ẢNH ĐI ĐÂU, HỘP ĐEN LÀM GÌ</div>
+        <h2 class="fl-title" id="flTitle">Lúc học: ảnh đi vào hộp đen như thế nào?</h2>
+      </div>
+      <button class="btn-ghost nw-close" onclick="closeFlow()">✕ Đóng</button>
+    </div>
+    <div class="fl-modes">
+      <button class="fl-mode active" id="flModeLearn" onclick="flSetMode('learn')">📥 LÚC HỌC — nạp ảnh</button>
+      <button class="fl-mode" id="flModeGuess" onclick="flSetMode('guess')">🔍 LÚC ĐOÁN — thử ảnh mới</button>
+    </div>
+    <div class="fl-track" id="flTrack">
+      <div class="fl-dot" id="flDot"></div>
+      <div class="fl-row" id="flRow"></div>
+    </div>
+    <div class="fl-explain" id="flExplain">Bấm ▶ Chạy để xem ảnh đi đâu.</div>
+    <div class="fl-ctrl">
+      <button class="btn-green" id="flRunBtn" onclick="flRunToggle()">▶ Chạy</button>
+      <button class="btn-ghost" onclick="flReplay()">↺ Chạy lại</button>
+      <span class="fl-count" id="flCount"></span>
+    </div>
   </div>
 </div>
 </body>
