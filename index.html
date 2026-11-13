@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Học Nhìn Ảnh v8 — 7 slide + Hệ thống huấn luyện kiểu Teachable Machine — Mở hộp đen xem máy học</title>
+<title>AI Học Nhìn Ảnh v9 — 7 slide + Hệ thống huấn luyện kiểu Teachable Machine — Mở hộp đen xem máy học</title>
 <style>
 
 /* ================= PHONG CÁCH: VIỄN TƯỞNG (SCI-FI) — nền vũ trụ navy tối, viền cyan phát sáng, điểm nhấn cam ================= */
@@ -635,6 +635,58 @@ button[onclick*="trUpDesk"], button[onclick*="trClear('desk')"], button[onclick*
 .fl-ctrl .btn-green{font-size:24px; padding:12px 26px;}
 .fl-ctrl .btn-ghost{font-size:20px; padding:10px 18px;}
 .fl-count{margin-left:auto; font-size:20px; color:#BAE6FD;}
+
+/* ===== v9: wizard 3 bước chụp + huấn luyện ===== */
+.wz-steps{display:flex; gap:10px; margin:10px 0 14px; flex-wrap:wrap;}
+.wz-chip{flex:1; min-width:180px; background:#0B1B3D; color:#BAE6FD; border:2px solid #1E3A5F; border-radius:14px; padding:12px 14px; font-size:19px; font-weight:800; text-align:left; cursor:pointer;}
+.wz-chip.on{border-color:#F59E0B; background:#1E293B; color:#fff; box-shadow:0 0 0 2px rgba(245,158,11,.35);}
+.wz-chip.done{border-color:#34D399; color:#A7F3D0;}
+.wz-panel{display:none;}
+.wz-panel.on{display:block;}
+.wz-view{position:relative; width:100%; max-width:640px; margin:0 auto; border-radius:16px; overflow:hidden; border:3px solid #1E3A5F; background:#000;}
+.wz-view video{width:100%; height:260px; object-fit:cover; display:block; background:#000;}
+.wz-view-off{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; text-align:center; background:#0B1B3D; color:#BAE6FD; font-size:20px; padding:20px; line-height:1.4;}
+.wz-flash{position:absolute; inset:0; background:#fff; opacity:0; pointer-events:none;}
+.wz-flash.go{animation:wzFlashA .35s ease;}
+@keyframes wzFlashA{0%{opacity:.9;}100%{opacity:0;}}
+.wz-count{font-size:32px; font-weight:900; color:#F59E0B; text-align:center; margin:10px 0 4px;}
+.wz-count.ok{color:#34D399;}
+.wz-grid{display:grid; grid-template-columns:repeat(5,1fr); gap:8px; max-width:640px; margin:8px auto 4px;}
+.wz-slot{position:relative; aspect-ratio:4/3; border-radius:10px; border:2px dashed #475569; background:#0B1B3D; color:#64748B; display:flex; align-items:center; justify-content:center; font-size:26px; font-weight:900; overflow:hidden;}
+.wz-slot.filled{border-style:solid; border-color:#34D399;}
+.wz-slot img{width:100%; height:100%; object-fit:cover; display:block;}
+.wz-slot .num{position:absolute; left:4px; top:2px; z-index:2; font-size:16px; font-weight:900; color:#fff; text-shadow:0 1px 4px #000;}
+.wz-slot .del{position:absolute; right:3px; top:3px; z-index:2; width:26px; height:26px; border-radius:50%; border:none; background:rgba(239,68,68,.9); color:#fff; font-size:15px; font-weight:900; cursor:pointer; line-height:1;}
+.wz-status{font-size:19px; color:#E2E8F0; text-align:center; margin:8px 0; min-height:26px; line-height:1.35;}
+.wz-big{font-size:24px !important; padding:16px 30px !important;}
+.wz-verdict{display:none; margin:12px auto; max-width:640px; border-radius:16px; padding:18px; font-size:34px; font-weight:900; text-align:center; line-height:1.3;}
+.wz-verdict.ok{background:#065F46; color:#fff; border:3px solid #34D399;}
+.wz-verdict.bad{background:#7F1D1D; color:#fff; border:3px solid #F87171;}
+.wz-log{max-width:640px; margin:8px auto; font-size:16px; color:#94A3B8; line-height:1.5;}
+.wz-log div{border-top:1px solid #1E3A5F; padding:5px 2px;}
+/* ===== v9: tab lệnh lớp học ===== */
+.cmd-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px; flex:1; min-height:0;}
+.cmd-panel{background:#0B1B3D; border-radius:16px; padding:16px; border:2px solid #1E3A5F;}
+.cmd-panel h3{font-size:22px; color:#fff; margin:0 0 8px;}
+.cmd-samples{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin:10px 0;}
+.cmd-sample{background:#1E293B; border:2px dashed #475569; border-radius:12px; padding:12px 8px; text-align:center; font-size:17px; color:#94A3B8; line-height:1.4;}
+.cmd-sample.got{border-style:solid; border-color:#34D399; color:#fff;}
+.cmd-sample button{margin-top:8px; font-size:15px; padding:6px 12px;}
+.cmd-banner{display:none; margin:12px 0; border-radius:16px; padding:18px; font-size:34px; font-weight:900; text-align:center; background:#065F46; color:#fff; border:3px solid #34D399;}
+.cmd-banner.show{display:block;}
+.cmd-banner.sit{background:#1E3A8A; border-color:#60A5FA;}
+.cmd-class{display:flex; gap:10px; justify-content:center; align-items:flex-end; height:170px; margin:10px 0 4px; background:#0F2A4D; border-radius:14px; padding:10px 6px 0;}
+.hs{width:64px; text-align:center; transition:transform .45s ease;}
+.hs .head{width:44px; height:44px; border-radius:50%; background:#FCD34D; margin:0 auto 4px; position:relative;}
+.hs .head::before{content:""; position:absolute; left:10px; top:17px; width:6px; height:6px; border-radius:50%; background:#0F172A; box-shadow:18px 0 0 #0F172A;}
+.hs .body{width:48px; height:56px; border-radius:12px 12px 0 0; background:#38BDF8; margin:0 auto; transition:height .45s ease, background .45s ease;}
+.hs .desk{height:8px; background:#92400E; border-radius:4px; margin-top:2px;}
+.hs.standing{transform:translateY(-34px);}
+.hs.standing .body{height:92px; background:#34D399;}
+.cmd-transcript{background:#F8FAFC; color:#0F172A; border-radius:12px; padding:12px; font-size:21px; min-height:56px; margin:8px 0;}
+.cmd-note{font-size:16px; color:#94A3B8; line-height:1.45;}
+.cmd-note b{color:#FDE68A;}
+
 </style>
 </head>
 <body>
@@ -645,21 +697,21 @@ button[onclick*="trUpDesk"], button[onclick*="trClear('desk')"], button[onclick*
   <section class="slide active" id="slide-1">
     <div class="slide-head"><span class="slide-kicker">SLIDE 1 / 7 • MỞ ĐẦU</span>
       <h2>🤖 AI HỌC NHÌN ẢNH — MỞ HỘP ĐEN RA XEM</h2></div>
-    <p class="slide-sub">Tiết 9 • Lớp 7 • Mã 7.C4.1 — Đạo đức dữ liệu huấn luyện AI &nbsp;•&nbsp; Trình chiếu kiểu Flash (HTML5 một file, chạy offline, không cần cài đặt) • Bản v5: nút giữ chụp to, khung ngắm riêng, sơ đồ nơ-ron trong hộp đen</p>
+    <p class="slide-sub">Tiết 9 • Lớp 7 • Mã 7.C4.1 — Đạo đức dữ liệu huấn luyện AI &nbsp;•&nbsp; Trình chiếu kiểu Flash (HTML5 một file, chạy offline, không cần cài đặt) • Bản v9: chụp 10 ảnh theo 3 bước to rõ + lệnh giọng “đứng dậy” + lưu dữ liệu để lần sau mở ra dùng ngay</p>
     <div class="flow" id="flow">
       <div class="station" id="st1" onclick="goSlide(2)"><div class="num">1</div><h3>ẢNH VÀO</h3><p>Nạp ảnh vào hộp</p></div>
       <div class="connector" id="c1"></div>
       <div class="station" id="st2" onclick="goSlide(3)"><div class="num">2</div><h3>THÀNH LƯỚI SỐ</h3><p>Ảnh chỉ là các con số</p></div>
       <div class="connector" id="c2"></div>
-      <div class="station" id="st3" onclick="goSlide(4)"><div class="num">3</div><h3>HỘP ĐEN</h3><p>Trong hộp có 12 chấm</p></div>
+      <div class="station" id="st3" onclick="goSlide(4)"><div class="num">3</div><h3>HỘP ĐEN</h3><p>Trong hộp có 16 chấm</p></div>
       <div class="connector" id="c3"></div>
       <div class="station" id="st4" onclick="goSlide(5)"><div class="num">4</div><h3>ĐẦU RA</h3><p>Đoán + đếm phiếu</p></div>
     </div>
     <p class="flow-note">👆 Dữ liệu chạy từ trái sang phải: ảnh đi vào → thành lưới số → vào hộp đen → ra đáp án.</p>
     <div class="s1-cards">
-      <div class="s1-card"><b>1 • Ảnh vào</b><span>Nạp 6 ảnh “Thầy Hưng” + 6 ảnh “Bàn ghế”.</span></div>
+      <div class="s1-card"><b>1 • Ảnh vào</b><span>Nạp 10 ảnh “Thầy Hưng” + 6 ảnh “Bàn ghế”.</span></div>
       <div class="s1-card"><b>2 • Thành lưới số</b><span>Mỗi ảnh là 1 lưới các con số 0–255, gom lại thành 2 con số.</span></div>
-      <div class="s1-card"><b>3 • Hộp đen</b><span>Trong hộp chỉ có 12 chấm đã lưu + 1 quy tắc đo khoảng cách.</span></div>
+      <div class="s1-card"><b>3 • Hộp đen</b><span>Trong hộp chỉ có 16 chấm đã lưu + 1 quy tắc đo khoảng cách.</span></div>
       <div class="s1-card"><b>4 • Đầu ra</b><span>Đo khoảng cách, lấy 3 chấm gần nhất, bên nào đông hơn thì đoán bên đó.</span></div>
     </div>
     <div class="s1-note">⚠️ <b>Nhớ trước khi xem:</b> máy không bao giờ nhìn thấy hình, máy không biết, không hiểu, không nghĩ — máy chỉ nhận các con số rồi so khớp với các con số đã lưu.</div>
@@ -675,7 +727,7 @@ button[onclick*="trUpDesk"], button[onclick*="trClear('desk')"], button[onclick*
     <div class="s2-grid">
       <div class="tray face">
         <h3>🟦 Lớp “Thầy Hưng”</h3>
-        <div class="cnt" id="cntFace">Đã nạp: 0 / 6 ảnh</div>
+        <div class="cnt" id="cntFace">Đã nạp: 0 / 10 ảnh</div>
         <div class="thumbs" id="thumbsFace"></div>
         <div class="row">
           <button class="btn-navy" onclick="addOne('face')">+ Thêm 1 ảnh</button>
@@ -704,7 +756,7 @@ button[onclick*="trUpDesk"], button[onclick*="trClear('desk')"], button[onclick*
           <button class="btn-ghost" onclick="stopTeacherCam()">Tắt camera</button>
           <button class="btn-ghost" onclick="restoreSamples()">↺ Dùng lại ảnh mẫu</button>
         </div>
-        <p class="cam-note">6 ảnh thật của thầy sẽ <b>thay</b> 6 ảnh mẫu trong lớp “Thầy Hưng”. Cách chụp: 3 ảnh đầu đủ sáng, 3 ảnh sau thầy che bớt sáng lại (hoặc quay lưng về phía sáng). Ảnh chỉ chạy trên máy thầy, không tải lên mạng.</p>
+        <p class="cam-note">10 ảnh thật của thầy sẽ <b>thay</b> ảnh mẫu trong lớp “Thầy Hưng”: 3 ảnh đầu đủ sáng, 3 ảnh sau thầy che bớt sáng lại (hoặc quay lưng về phía sáng), 4 ảnh còn lại chụp trong Hệ thống huấn luyện. Ảnh chỉ chạy trên máy thầy, không tải lên mạng.</p>
       </div>
     </div>
     <div class="row slide-actions">
@@ -789,7 +841,7 @@ button[onclick*="trUpDesk"], button[onclick*="trClear('desk')"], button[onclick*
           <button class="btn-green btn-big" id="s4WatchBtn" onclick="openNnWatch()" style="margin-top:8px">🔍 Xem nơ-ron hoạt động từng bước</button>
         </div>
         <div class="parts">
-          <div class="part"><b>① Kho chứa</b> — 12 chấm, mỗi chấm truy vết về ảnh gốc.</div>
+          <div class="part"><b>① Kho chứa</b> — 16 chấm, mỗi chấm truy vết về ảnh gốc.</div>
           <div class="part"><b>② Thước đo</b> — 3 chấm gần nhất sáng lên + đường nối.</div>
           <div class="part"><b>③ Bộ đếm phiếu</b> — 2/3 hay 3/3 thì đoán bên đó.</div>
           <div class="part"><b>④ Mạng nơ-ron</b> — trọng số đổi theo dữ liệu (tab bên phải).</div>
@@ -835,7 +887,7 @@ button[onclick*="trUpDesk"], button[onclick*="trClear('desk')"], button[onclick*
   <section class="slide" id="slide-5">
     <div class="slide-head"><span class="slide-kicker">SLIDE 5 / 7 • CHẶNG 4 — THỬ</span>
       <h2>Thử — máy đoán đúng hay đoán lệch?</h2></div>
-    <p class="slide-sub">Nạp đủ 12 ảnh rồi bấm thử. Cả lớp nhìn <b style="color:#fff;">chấm vàng chạy trên bản đồ</b>, rồi xem máy đoán và vì sao.</p>
+    <p class="slide-sub">Nạp đủ ảnh rồi bấm thử (10 ảnh “Thầy Hưng” + 6 ảnh “Bàn ghế”). Cả lớp nhìn <b style="color:#fff;">chấm vàng chạy trên bản đồ</b>, rồi xem máy đoán và vì sao.</p>
     <div class="s5-grid">
       <div class="s5-left">
         <div class="test-btns">
@@ -921,7 +973,7 @@ button[onclick*="trUpDesk"], button[onclick*="trClear('desk')"], button[onclick*
           <div class="bar"><div class="b1" id="volBar2" style="width:0%"></div></div>
         </div>
         <div class="voice-nums" id="voiceNums">Các con số máy vừa đọc từ sóng âm sẽ hiện ở đây khi thầy nói.</div>
-        <div class="voice-privacy">🔒 <b>Nói rõ về giọng nói:</b> phần sóng âm + độ to chạy hoàn toàn trên máy thầy, không cần mạng. Phần nhận diện thành chữ dùng tính năng nhận diện giọng nói có sẵn của trình duyệt Chrome — cần mạng, giọng nói được trình duyệt gửi đi xử lý. App này <b>không lưu giọng nói, không gửi giọng nói lên máy chủ riêng</b>.</div>
+        <div class="voice-privacy">🔒 <b>Nói rõ về giọng nói:</b> phần sóng âm + độ to chạy hoàn toàn trên máy thầy, không cần mạng. Phần nhận diện thành chữ dùng tính năng nhận diện giọng nói có sẵn của trình duyệt Chrome — cần mạng, giọng nói được trình duyệt gửi đi xử lý. App này <b>không gửi giọng nói lên máy chủ riêng</b>. Riêng 3 mẫu giọng “đứng dậy” thầy thu trong Hệ thống huấn luyện được <b>lưu trên máy thầy</b> (bộ nhớ trình duyệt) để lần sau mở ra dùng ngay — xóa bằng nút 🗑 trong đó.</div>
       </div>
     </div>
   </section>
@@ -949,114 +1001,73 @@ button[onclick*="trUpDesk"], button[onclick*="trClear('desk')"], button[onclick*
     <button class="btn-ghost" onclick="closeTrainer()">‹ Về các slide</button>
   </div>
   <div class="tr-tabs">
-    <button class="tr-tab active" id="trTabImg" onclick="trShowTab('img')">🖼️ Hình ảnh</button>
+    <button class="tr-tab active" id="trTabImg" onclick="trShowTab('img')">📸 Chụp + Huấn luyện</button>
     <button class="tr-tab" id="trTabAud" onclick="trShowTab('aud')">🎙️ Âm thanh</button>
+    <button class="tr-tab" id="trTabCmd" onclick="trShowTab('cmd')">🗣️ Lệnh lớp học</button>
     <span class="tr-tab-note">Tab Âm thanh: 2 lớp giọng — giữ để thu mẫu, rồi nói thử để nhận diện thành chữ.</span>
   </div>
 
   <!-- ===== TAB HÌNH ẢNH: 3 CỘT ===== -->
-  <div class="tr-body" id="trBodyImg">
-    <div class="tr-col">
-      <h3>📚 Lớp học — nạp dữ liệu</h3>
-      <div class="tr-class face">
-        <div class="tr-class-head"><span class="dot" style="background:#38BDF8"></span><input id="trNameFace" value="Mặt thầy" onchange="trRename('face', this.value)" aria-label="Tên lớp 1"><span class="tr-cnt" id="trCntFace">0 / 6 ảnh</span></div>
-        <div class="tr-view" id="trViewFaceBox" onclick="trViewClick('face')" title="Bấm để bật camera" style="cursor:pointer">
-          <video class="tr-view-video" id="trViewFace" autoplay playsinline muted></video>
-          <div class="tr-view-off" id="trViewOffFace">📷 Chưa bật camera — bấm giữ để chụp, camera sẽ tự bật</div>
-          <div class="tr-view-flash" id="trViewFlashFace"></div>
-          <div class="tr-view-tag">Khung ngắm — lớp “Mặt thầy”</div>
-        </div>
-        <div class="tr-thumbs" id="trThumbsFace"></div>
-        <div class="tr-hold-hint">Giữ để chụp liên tiếp — thả ra là dừng. Bấm 1 cái cũng chụp được 1 ảnh.</div>
-        <div class="tr-btns">
-          <button class="tr-hold tr-hold-big" id="trHoldFace" onpointerdown="trHoldStart('face', this)" onpointerup="trHoldStop()" onpointerleave="trHoldStop()" oncontextmenu="return false"><svg class="tr-ring" viewBox="0 0 44 44"><circle class="tr-ring-bg" cx="22" cy="22" r="19"></circle><circle class="tr-ring-fg" id="trRingFace" cx="22" cy="22" r="19"></circle></svg><span class="tr-hold-label">📷 GIỮ ĐỂ CHỤP</span><span class="tr-hold-count" id="trHoldCntFace"></span></button>
-        </div>
-        <div class="tr-btns"><button class="btn-green" id="trSnapFace" onclick="trSnapOnce('face', this)">📸 Chụp 1 ảnh</button></div>
-        <div class="tr-cam-err" id="trCamErrFace"></div>
-        <div class="tr-btns">
-          <button class="btn-navy" onclick="document.getElementById('trUpFace').click()">⬆️ Tải ảnh lên</button>
-          <button class="btn-ghost" onclick="trClear('face')">🗑️ Xóa ảnh</button>
-        </div>
-        <div class="tr-btns"><button class="btn-amber" onclick="trLoadSample('face')">🖼️ Mẫu</button></div>
-        <div class="tr-sample-tag">🏷️ Ảnh mẫu — sẽ thay bằng ảnh thật của thầy</div>
-        <input type="file" id="trUpFace" accept="image/*" style="display:none" onchange="trUpload('face', this)">
+<div class="tr-body" id="trBodyImg" style="display:block;">
+    <div class="wz-steps">
+      <button class="wz-chip on" id="wzChip1" onclick="wzShow(1)">① BƯỚC 1 — Chụp 10 ảnh</button>
+      <button class="wz-chip" id="wzChip2" onclick="wzNext(2)">② BƯỚC 2 — Huấn luyện</button>
+      <button class="wz-chip" id="wzChip3" onclick="wzNext(3)">③ BƯỚC 3 — Thử ngay</button>
+    </div>
+
+    <!-- BƯỚC 1 -->
+    <div class="wz-panel on" id="wzStep1">
+      <div class="wz-view">
+        <video id="wzVideo" autoplay playsinline muted></video>
+        <div class="wz-view-off" id="wzViewOff">Bấm “📷 Bật camera” để thấy mặt thầy ở đây.<br>Ảnh chỉ chạy trên máy thầy, không tải lên mạng.</div>
+        <div class="wz-flash" id="wzFlash"></div>
       </div>
-      <div class="tr-class desk">
-        <div class="tr-class-head"><span class="dot" style="background:#FB923C"></span><b style="font-size:18px">Không phải mặt thầy</b><span style="font-size:13px;color:#FDBA74"> (bàn ghế — đã có sẵn)</span><span class="tr-cnt" id="trCntDesk">0 / 6 ảnh</span></div>
-        <div class="tr-view" id="trViewDeskBox" onclick="trViewClick('desk')" title="Bấm để bật camera" style="cursor:pointer">
-          <video class="tr-view-video" id="trViewDesk" autoplay playsinline muted></video>
-          <div class="tr-view-off" id="trViewOffDesk">📷 Chưa bật camera — bấm giữ để chụp, camera sẽ tự bật</div>
-          <div class="tr-view-flash" id="trViewFlashDesk"></div>
-          <div class="tr-view-tag">Khung ngắm — lớp “Bàn ghế”</div>
-        </div>
-        <div class="tr-thumbs" id="trThumbsDesk"></div>
-        <div class="tr-hold-hint">Giữ chuột (hoặc giữ tay) để chụp liên tiếp — thả ra là dừng. Mỗi 0,5 giây chụp 1 ảnh. Bấm 1 cái cũng chụp được 1 ảnh — camera tự bật khi bấm.</div>
-        <div class="tr-btns">
-          <button class="tr-hold tr-hold-big" id="trHoldDesk" onpointerdown="trHoldStart('desk', this)" onpointerup="trHoldStop()" onpointerleave="trHoldStop()" oncontextmenu="return false"><svg class="tr-ring" viewBox="0 0 44 44"><circle class="tr-ring-bg" cx="22" cy="22" r="19"></circle><circle class="tr-ring-fg" id="trRingDesk" cx="22" cy="22" r="19"></circle></svg><span class="tr-hold-label">📷 GIỮ ĐỂ CHỤP</span><span class="tr-hold-count" id="trHoldCntDesk"></span></button>
-        </div>
-        <div class="tr-btns"><button class="btn-green" id="trSnapDesk" onclick="trSnapOnce('desk', this)">📸 Chụp 1 ảnh</button></div>
-        <div class="tr-cam-err" id="trCamErrDesk"></div>
-        <div class="tr-btns">
-          <button class="btn-navy" onclick="document.getElementById('trUpDesk').click()">⬆️ Tải ảnh lên</button>
-          <button class="btn-ghost" onclick="trClear('desk')">🗑️ Xóa ảnh</button>
-        </div>
-        <div class="tr-btns"><button class="btn-amber" onclick="trLoadSample('desk')">🖼️ Mẫu</button></div>
-        <div class="tr-ready-tag">✅ Đã có sẵn 6 ảnh mẫu — thầy không cần chụp</div>
-        <input type="file" id="trUpDesk" accept="image/*" style="display:none" onchange="trUpload('desk', this)">
+      <div class="wz-count" id="wzCount">Đã chụp: 0 / 10</div>
+      <div class="tr-btns" style="justify-content:center; gap:10px;">
+        <button class="btn-cyan" id="wzCamBtn" onclick="wzEnsureCam()">📷 Bật camera</button>
+        <button class="btn-green btn-big wz-big" onclick="wzSnap()">📸 Chụp 1 ảnh</button>
+      </div>
+      <p class="wz-status" id="wzStatus1">Chưa chụp ảnh nào — bấm “📷 Bật camera” rồi chụp.</p>
+      <div class="wz-grid" id="wzGrid"></div>
+      <div class="tr-btns" style="justify-content:center; gap:10px; margin-top:10px;">
+        <button class="btn-amber" onclick="wzLoadSample()">🖼️ Dùng 6 ảnh mẫu rồi chụp thêm 4 ảnh</button>
+        <button class="btn-ghost" onclick="wzResetFace()">🔄 Chụp lại từ đầu</button>
+      </div>
+      <div class="tr-btns" style="justify-content:center; margin-top:14px;">
+        <button class="btn-green btn-big wz-big" id="wzTo2" onclick="wzNext(2)" disabled>➡ Sang bước 2 — Huấn luyện</button>
       </div>
     </div>
 
-    <div class="tr-col">
-      <h3>⚙️ Huấn luyện — nhìn thấy từng bước</h3>
-      <p class="tr-guide">👉 Thầy chỉ cần chụp mặt thầy (6 ảnh) — lớp bên kia đã có sẵn rồi.</p>
-      <button class="btn-green btn-big" id="trTrainBtn" onclick="trTrain()">▶️ HUẤN LUYỆN</button>
-      <div class="tr-progress"><div id="trProgBar"></div></div>
-      <p id="trStep">Chưa huấn luyện — chụp ảnh mặt thầy rồi bấm “▶️ HUẤN LUYỆN”. Lớp bàn ghế đã có sẵn rồi.</p>
-      <button class="btn-amber btn-big" id="trWatchBtn" onclick="openNnWatch()">🔍 Mở hộp đen — xem nơ-ron hoạt động</button>
-      <button class="btn-green btn-big" id="trFlowBtn" onclick="openFlow()" style="margin-top:8px">🌊 Xem luồng chạy</button>
-      <div class="tr-mini-map">
-        <div class="tr-mini-head">📦 Bản đồ chấm trong hộp đen — <span id="trMapCount">hộp đang trống</span></div>
-        <div class="tr-map-wrap">
-          <canvas class="mapCanvas" id="mapCanvasT" width="820" height="430"></canvas>
-          <div class="dot-tip" id="dotTipT"></div>
-        </div>
-        <p class="tr-rule">👉 Đo khoảng cách → lấy 3 chấm gần nhất → bên nào đông hơn thì đoán bên đó. Bấm vào 1 chấm để xem ảnh gốc và 2 con số của nó.</p>
-        <p class="tr-note">“Huấn luyện” ở đây là: đọc từng ảnh thành 2 con số rồi lưu thành 1 chấm. Bên dưới là sơ đồ nơ-ron minh họa cách trọng số đổi theo dữ liệu — máy đoán thật vẫn bằng k-NN.</p>
+    <!-- BƯỚC 2 -->
+    <div class="wz-panel" id="wzStep2">
+      <p style="font-size:24px; color:#fff; text-align:center; margin:6px 0 16px;">Máy sẽ đọc 10 ảnh mặt thầy + 6 ảnh bàn ghế,<br>mỗi ảnh thành 2 con số, rồi cất 16 chấm vào hộp đen.</p>
+      <div class="tr-btns" style="justify-content:center;">
+        <button class="btn-green btn-big wz-big" id="trTrainBtn" onclick="wzTrain()">▶️ HUẤN LUYỆN</button>
+      </div>
+      <div class="tr-progress" style="max-width:640px; margin:18px auto 6px;"><div id="trProgBar"></div></div>
+      <p class="wz-status" id="trStep">Chưa huấn luyện — chụp đủ 10 ảnh ở bước 1 rồi bấm “▶️ HUẤN LUYỆN”.</p>
+      <p class="tr-note" id="wzMapInfo" style="text-align:center;">Hộp đen: 0 chấm đã lưu.</p>
+      <div class="tr-btns" style="justify-content:center; margin-top:14px;">
+        <button class="btn-green btn-big wz-big" id="wzTo3" onclick="wzNext(3)" disabled>➡ Sang bước 3 — Thử ngay</button>
+        <button class="btn-ghost wz-big" onclick="wzShow(1)">⬅ Quay lại bước 1</button>
       </div>
     </div>
-      <div class="nn-panel">
-        <div class="nn-head">🧠 Mạng nơ-ron — máy ghi nhận như thế nào?</div>
-        <canvas class="nn-canvas" id="nnCanvasT" width="760" height="240"></canvas>
-        <p class="nn-cap" id="nnCapT">Chưa huấn luyện — bấm “HUẤN LUYỆN” để xem trọng số đổi theo từng ảnh.</p>
-        <p class="nn-bound">⚠️ Sơ đồ này minh họa CÁCH mạng nơ-ron ghi nhận việc học (trọng số thay đổi theo dữ liệu). Còn máy trong app này đoán bằng cách đo khoảng cách 3 chấm gần nhất (k-NN) như đã kiểm chứng — AI thật dùng mạng nơ-ron với hàng triệu nơ-ron nên không mở ra xem từng cái được.</p>
-        <p class="nn-formula">Công thức cập nhật (quy tắc delta): w mới = w cũ + 0,05 × tín hiệu vào × sai số.</p>
-      </div>
 
-    <div class="tr-col">
-      <h3>👀 Xem trước trực tiếp</h3>
-      <video id="trVideo" autoplay playsinline muted></video>
-      <p id="trPrevStatus">Chưa bật camera — bấm “📷 Bật camera” rồi đưa mặt vào.</p>
-      <div class="tr-btns">
-        <button class="btn-navy" id="trCamBtn" onclick="trToggleCam()">📷 Bật camera</button>
-        <button class="btn-ghost" onclick="trPreviewTest('bright')">☀️ Thử ảnh đủ sáng</button>
-        <button class="btn-ghost" onclick="trPreviewTest('dim')">🌑 Thử ảnh thiếu sáng</button>
-        <button class="btn-ghost" onclick="trPreviewTest('desk')">🪑 Thử bàn ghế</button>
+    <!-- BƯỚC 3 -->
+    <div class="wz-panel" id="wzStep3">
+      <p style="font-size:24px; color:#fff; text-align:center; margin:6px 0 12px;">Chụp 1 ảnh mới — xem máy đoán có đúng không.<br>Thử cả <b style="color:#FDE68A;">ảnh sáng</b> lẫn <b style="color:#FDE68A;">ảnh tối</b> (che bớt sáng lại).</p>
+      <div class="tr-btns" style="justify-content:center;">
+        <button class="btn-green btn-big wz-big" onclick="wzTest()">📸 Chụp ảnh thử</button>
       </div>
-      <div class="tr-bar-row">
-        <label>🟦 <span class="tr-bar-name-face">Mặt thầy</span>: <span id="trPctFace">—</span></label>
-        <div class="tr-bar"><div id="trBarFace" style="width:0%; background:#38BDF8"></div></div>
+      <div class="wz-verdict" id="wzVerdict"></div>
+      <div class="wz-log" id="wzLog"></div>
+      <div class="tr-btns" style="justify-content:center; margin-top:16px;">
+        <button class="btn-cyan btn-big wz-big" onclick="closeTrainer(); goSlide(5)">✅ Xong — về các slide</button>
+        <button class="btn-ghost wz-big" onclick="wzShow(1)">⬅ Chụp lại 10 ảnh</button>
       </div>
-      <div class="tr-bar-row">
-        <label>🟧 <span class="tr-bar-name-desk">Không phải mặt thầy</span>: <span id="trPctDesk">—</span></label>
-        <div class="tr-bar"><div id="trBarDesk" style="width:0%; background:#FB923C"></div></div>
-      </div>
-      <p id="trGuess">Máy đoán: —</p>
-      <p id="trNear">3 chấm gần nhất: —</p>
-      <p class="tr-hint">Thanh % chạy theo thời gian thực khi camera bật. Không có camera thì dùng 3 nút thử ảnh.</p>
     </div>
   </div>
-
-  <!-- ===== TAB ÂM THANH: 2 LỚP GIỌNG ===== -->
+<!-- ===== TAB ÂM THANH: 2 LỚP GIỌNG ===== -->
   <div class="tr-aud-grid" id="trBodyAud" style="display:none">
     <div class="tr-col">
       <h3>🎙️ Lớp giọng — thu mẫu</h3>
@@ -1117,8 +1128,50 @@ button[onclick*="trUpDesk"], button[onclick*="trClear('desk')"], button[onclick*
       <div class="tr-classify" id="trClassify">Thu mẫu cho cả 2 lớp “Giọng thầy” và “Tiếng ồn” trước, rồi nói thử — máy sẽ so sánh độ to trung bình với 2 lớp mẫu.</div>
       <div class="tr-bar-row"><label>🟢 Giọng thầy: <span id="trAudPctTeacher">—</span></label><div class="tr-bar"><div id="trAudBarTeacher" style="width:0%; background:#34D399"></div></div></div>
       <div class="tr-bar-row"><label>⚪ Tiếng ồn: <span id="trAudPctNoise">—</span></label><div class="tr-bar"><div id="trAudBarNoise" style="width:0%; background:#94A3B8"></div></div></div>
-      <p class="tr-note">🔒 Nói rõ về giọng nói: phần nhận diện thành chữ dùng tính năng nhận diện giọng nói có sẵn của trình duyệt Chrome — cần mạng, giọng nói được trình duyệt gửi đi xử lý. App này <b>không lưu giọng nói, không gửi giọng nói lên máy chủ riêng</b>.</p>
+      <p class="tr-note">🔒 Nói rõ về giọng nói: phần nhận diện thành chữ dùng tính năng nhận diện giọng nói có sẵn của trình duyệt Chrome — cần mạng, giọng nói được trình duyệt gửi đi xử lý. App này <b>không gửi giọng nói lên máy chủ riêng</b>. Chỉ 3 mẫu giọng “đứng dậy” ở tab “Lệnh lớp học” mới được <b>lưu trên máy thầy</b> để lần sau dùng ngay.</p>
       <div class="tr-btns"><button class="btn-amber" onclick="trShowTab('img'); closeTrainer(); goSlide(7)">➡ Mở slide giọng nói (slide 7)</button></div>
+    </div>
+  </div>
+
+  <div class="tr-body" id="trBodyCmd" style="display:none;">
+    <p class="tr-note" style="font-size:16px; margin-bottom:10px;">Nhận diện lệnh bằng <b>tính năng nhận diện giọng nói có sẵn của trình duyệt Chrome</b> (cần mạng để nhận thành chữ). 3 mẫu giọng thầy thu ở bước 1 chỉ để <b>đánh dấu “đã huấn luyện”</b> và dùng lại lần sau — app không tự huấn luyện mô hình nhận diện giọng riêng.</p>
+    <div class="cmd-grid">
+      <div class="cmd-panel">
+        <h3>① Thu mẫu giọng “đứng dậy”</h3>
+        <div class="cmd-samples" id="cmdSamples"></div>
+        <div class="tr-btns" style="justify-content:center;">
+          <button class="btn-green btn-big wz-big" id="cmdRecBtn" onclick="cmdRecToggle()">🎙️ Thu 1 mẫu “đứng dậy”</button>
+        </div>
+        <p class="wz-status" id="cmdRecStatus">Chưa thu mẫu nào — bấm mic rồi nói “đứng dậy”.</p>
+        <p class="cmd-note" id="cmdSavedNote" style="display:none;">✅ <b>Đã có sẵn 3 mẫu giọng “đứng dậy” — bấm “Bắt đầu nghe lệnh” là dùng ngay</b>, không cần thu lại. Mẫu giọng chỉ lưu <b>trên máy thầy</b> (bộ nhớ trình duyệt), không gửi lên máy chủ riêng.</p>
+        <div class="tr-btns" style="justify-content:center; margin-top:8px;">
+          <button class="btn-ghost" onclick="cmdClearVoice()">🗑 Xóa dữ liệu giọng đã lưu</button>
+        </div>
+      </div>
+      <div class="cmd-panel">
+        <h3>② Nghe lệnh — lớp học ảo</h3>
+        <div class="cmd-banner" id="cmdBanner"></div>
+        <div class="cmd-class" id="cmdClass">
+          <div class="hs"><div class="head"></div><div class="body"></div><div class="desk"></div></div>
+          <div class="hs"><div class="head"></div><div class="body"></div><div class="desk"></div></div>
+          <div class="hs"><div class="head"></div><div class="body"></div><div class="desk"></div></div>
+          <div class="hs"><div class="head"></div><div class="body"></div><div class="desk"></div></div>
+          <div class="hs"><div class="head"></div><div class="body"></div><div class="desk"></div></div>
+          <div class="hs"><div class="head"></div><div class="body"></div><div class="desk"></div></div>
+        </div>
+        <p class="tr-note" id="cmdClassCap" style="text-align:center;">6 em đang ngồi — hô “đứng dậy” là cả lớp đứng lên.</p>
+        <div class="cmd-transcript" id="cmdTranscript">—</div>
+        <div class="tr-btns" style="justify-content:center;">
+          <button class="btn-green btn-big wz-big" id="cmdListenBtn" onclick="cmdListenStart()" disabled>▶️ Bắt đầu nghe lệnh</button>
+          <button class="btn-ghost wz-big" id="cmdListenStopBtn" onclick="cmdListenStop()" disabled>⏹ Dừng nghe</button>
+        </div>
+        <p class="wz-status" id="cmdListenStatus">Chưa nghe — thu đủ 3 mẫu ở bước 1 rồi bấm “Bắt đầu nghe lệnh”.</p>
+        <div class="tr-btns" style="justify-content:center;">
+          <button class="btn-cyan" onclick="cmdStandUp('nut')">🧍 Cho cả lớp đứng dậy</button>
+          <button class="btn-ghost" onclick="cmdSitDown('nut')">🪑 Cho cả lớp ngồi xuống</button>
+        </div>
+        <p class="tr-note" style="text-align:center; margin-top:8px;">Hô “ngồi xuống” cũng cho cả lớp ngồi lại. Mic lỗi thì dùng 2 nút trên.</p>
+      </div>
     </div>
   </div>
 </div>
@@ -1142,6 +1195,8 @@ const CLASSES = {
 };
 /* 6 biến thể mỗi lớp: [độ sáng, độ cắt khung] */
 const VARIANTS = [[0.92,1.0],[1.0,1.0],[1.08,1.0],[0.95,0.85],[1.03,0.85],[1.0,0.85]];
+const FACE_MAX = 10, DESK_MAX = 6; /* v9: lớp Thầy Hưng đúng 10 ảnh, lớp Bàn ghế 6 ảnh */
+function classMax(cls){ return cls === "face" ? FACE_MAX : DESK_MAX; }
 /* 3 ảnh tối để sửa dữ liệu lệch */
 const DIM_FIX = [[0.35,1.0],[0.42,1.0],[0.32,1.0]];
 const TESTS = {
@@ -1429,11 +1484,11 @@ function renderThumbs(){
       d.onclick=()=>{ document.querySelectorAll(".thumb").forEach(e=>e.classList.remove("sel")); d.classList.add("sel"); showInspector(t); };
       box.appendChild(d);
     });
-    for(let i=train[cls].length;i<6;i++){
+    for(let i=train[cls].length;i<classMax(cls);i++){
       const e=document.createElement("div"); e.className="thumb empty"; e.textContent="+"; box.appendChild(e);
     }
     document.getElementById(cls==="face"?"cntFace":"cntDesk").textContent =
-      "Đã nạp: "+train[cls].length+" / 6 ảnh";
+      "Đã nạp: "+train[cls].length+" / "+classMax(cls)+" ảnh";
   }
   renderSrcStrip();
   drawMap();
@@ -1453,7 +1508,8 @@ function flyToBox(fromEl, done){
   setTimeout(()=>{ img.remove(); if(done)done(); },850);
 }
 function addOne(cls, silent){
-  if(train[cls].length>=VARIANTS.length){ toast("Lớp “"+CLASSES[cls].name+"” đã đủ 6 ảnh rồi."); return; }
+  var _cap=Math.min(VARIANTS.length, classMax(cls));
+  if(train[cls].length>=_cap){ toast("Lớp “"+CLASSES[cls].name+"” đã đủ "+_cap+" ảnh rồi."); return; }
   const v=VARIANTS[train[cls].length];
   const item=makeItem(cls, train[cls].length, v[0], v[1]);
   const tray=document.querySelectorAll("#"+(cls==="face"?"thumbsFace":"thumbsDesk")+" .thumb")[train[cls].length];
@@ -1462,8 +1518,8 @@ function addOne(cls, silent){
   setStation(1); setStationDone(1);
   if(!silent) toast("Đã nạp 1 ảnh “"+CLASSES[cls].name+"” vào hộp đen → thành 1 chấm mới.");
 }
-function addAll(cls){ while(train[cls].length<VARIANTS.length) addOne(cls,true);
-  toast("Đã nạp đủ 6 ảnh “"+CLASSES[cls].name+"” vào hộp đen."); renderThumbs(); }
+function addAll(cls){ while(train[cls].length<Math.min(VARIANTS.length, classMax(cls))) addOne(cls,true);
+  toast("Đã nạp đủ "+train[cls].length+" ảnh “"+CLASSES[cls].name+"” vào hộp đen."); renderThumbs(); }
 function addAllBoth(){ addAll("face"); addAll("desk");
   toast("Đã nạp đủ 12 ảnh — sang slide 4 để mở hộp đen xem bản đồ chấm!"); openBox(); }
 
@@ -1631,8 +1687,9 @@ function snapPhoto(){
 }
 function addWebcamPhoto(cls){
   const item=window._webcamItem; if(!item) return;
+  if(train[cls].length>=classMax(cls)){ toast("Lớp “"+CLASSES[cls].name+"” đã đủ "+classMax(cls)+" ảnh rồi."); return; }
   const t={cls, b:item.b, c:item.c, bright:1, crop:1, thumb:item.thumb, label:CLASSES[cls].name+" (webcam) #"+(train[cls].length+1)};
-  train[cls].push(t); renderThumbs();
+  train[cls].push(t); renderThumbs(); if(cls==="face") saveFace10();
   toast("Đã thêm ảnh webcam vào lớp “"+CLASSES[cls].name+"”.");
 }
 
@@ -1801,6 +1858,7 @@ async function captureOneFrame() {
   return { img: img, url: url };
 }
 function addTeacherPhoto(fr, label) {
+  if (train.face.length >= FACE_MAX) { toast("Lớp “Thầy Hưng” đã đủ 10 ảnh rồi."); return; }
   const f = computeFeatures(fr.img, 1, 1);
   const item = { cls: "face", b: f.b, c: f.c, bright: 1, crop: 1, thumb: fr.url, imgEl: fr.img, label: label };
   train.face.push(item);
@@ -1817,7 +1875,8 @@ async function captureTeacherPhase(phase) {
   teacherBusy = true;
   try {
     if (phase === 1) {
-      train.face = []; fixedDone = false;
+      if (train.face.length >= FACE_MAX) { st.textContent = "Lớp “Thầy Hưng” đã đủ 10 ảnh rồi — muốn chụp lại thì mở “Hệ thống huấn luyện”, bấm “Chụp lại từ đầu”."; teacherBusy = false; return; }
+      fixedDone = false;
       document.getElementById("btnFix").disabled = false;
       st.textContent = "Đang chụp 3 ảnh đủ sáng — thầy giữ yên…";
       for (let i = 0; i < 3; i++) {
@@ -1825,7 +1884,7 @@ async function captureTeacherPhase(phase) {
         const fr = await captureOneFrame();
         addTeacherPhoto(fr, "Ảnh thật của thầy #" + (train.face.length + 1));
       }
-      renderThumbs(); drawMap();
+      renderThumbs(); drawMap(); saveFace10();
       st.textContent = "Đã chụp 3 ảnh đủ sáng. Bây giờ che bớt sáng lại (hoặc quay lưng về phía sáng), rồi bấm “🌑 Chụp 3 ảnh tối”.";
       toast("Đã chụp 3 ảnh đủ sáng của thầy.");
     } else {
@@ -1835,10 +1894,10 @@ async function captureTeacherPhase(phase) {
         const fr = await captureOneFrame();
         addTeacherPhoto(fr, "Ảnh thật của thầy (tối) #" + (train.face.length + 1));
       }
-      renderThumbs(); drawMap();
+      renderThumbs(); drawMap(); saveFace10();
       stopTeacherCam();
-      st.textContent = "Đã chụp đủ 6 ảnh thật của thầy — lớp “Thầy Hưng” giờ dùng ảnh thật, không còn ảnh mẫu.";
-      toast("Đã chụp đủ 6 ảnh thật của thầy.");
+      st.textContent = "Đã chụp " + train.face.length + " ảnh thật (" + train.face.length + "/10) — lớp “Thầy Hưng” giờ dùng ảnh thật. Muốn đủ 10 thì mở “Hệ thống huấn luyện” chụp thêm.";
+      toast("Đã chụp " + train.face.length + " ảnh thật của thầy (" + train.face.length + "/10).");
     }
   } catch (e) {
     st.textContent = "⚠️ Không chụp được ảnh (" + (e.name || e.message || "lỗi") + "). Thử lại hoặc dùng ảnh mẫu.";
@@ -1852,7 +1911,7 @@ function restoreSamples() {
     const v = VARIANTS[i];
     train.face.push(makeItem("face", i, v[0], v[1]));
   }
-  renderThumbs(); drawMap();
+  renderThumbs(); drawMap(); saveFace10();
   document.getElementById("fixCompare").innerHTML = "<p>Chưa có số liệu — bấm “Thêm 3 ảnh tối” để đo.</p>";
   document.getElementById("fixStatus").textContent = "Chưa thêm — thử ảnh thiếu sáng ở slide 5 trước để thấy máy đoán sai.";
   document.getElementById("camStatus").textContent = "Đã dùng lại 6 ảnh mẫu cho lớp “Thầy Hưng”.";
@@ -1874,6 +1933,8 @@ function fixData() {
   }
   const beforeDim = predFor("dim"), beforeVery = predFor("verydim");
   const srcImg = window._teacherImg || null;
+  var _fixFull = train.face.length >= FACE_MAX;
+  if (_fixFull) train.face.splice(train.face.length - 3, 3); /* v9: lớp đã đủ 10 ảnh → đổi 3 ảnh cuối thành ảnh tối, giữ đúng 10 ảnh */
   DIM_FIX.forEach(function (v) {
     let item;
     if (srcImg) {
@@ -1886,7 +1947,7 @@ function fixData() {
     train.face.push(item);
   });
   fixedDone = true;
-  renderThumbs();
+  renderThumbs(); saveFace10();
   const afterDim = predFor("dim"), afterVery = predFor("verydim");
   function row(label, b, a) {
     return "<tr><td><b>" + label + "</b></td>"
@@ -1899,9 +1960,9 @@ function fixData() {
     + row("Rất tối", beforeVery, afterVery)
     + "</table>"
     + "<p style=\"margin-top:10px; color:#FDE68A;\">Số đo trên app thật, tính từ khoảng cách các chấm — không phải số ghi sẵn.</p>";
-  document.getElementById("fixStatus").textContent = "Đã thêm 3 ảnh tối. Sang slide 5 thử lại để thấy máy đoán đúng hơn.";
+  document.getElementById("fixStatus").textContent = _fixFull ? "Đã đổi 3 ảnh cuối thành ảnh tối (lớp vẫn đủ 10 ảnh). Sang slide 5 thử lại để thấy máy đoán đúng hơn." : "Đã thêm 3 ảnh tối. Sang slide 5 thử lại để thấy máy đoán đúng hơn.";
   document.getElementById("btnFix").disabled = true;
-  toast("Đã thêm 3 ảnh tối vào lớp “Thầy Hưng”.");
+  toast(_fixFull ? "Đã đổi 3 ảnh cuối thành ảnh tối (lớp vẫn đủ 10 ảnh)." : "Đã thêm 3 ảnh tối vào lớp “Thầy Hưng”.");
 }
 function retestDim() { runTest("dim"); goSlide(5); }
 function retestVeryDim() { runTest("verydim"); goSlide(5); }
@@ -2098,44 +2159,26 @@ function closeTrainer() {
 document.addEventListener("keydown", function (e) { if (e.key === "Escape" && trOpen) closeTrainer(); });
 
 function trShowTab(tab) {
-  document.getElementById("trBodyImg").style.display = tab === "img" ? "grid" : "none";
+  document.getElementById("trBodyImg").style.display = tab === "img" ? "block" : "none";
   document.getElementById("trBodyAud").style.display = tab === "aud" ? "grid" : "none";
+  var _cmd = document.getElementById("trBodyCmd");
+  if (_cmd) _cmd.style.display = tab === "cmd" ? "block" : "none";
   document.getElementById("trTabImg").classList.toggle("active", tab === "img");
   document.getElementById("trTabAud").classList.toggle("active", tab === "aud");
-  if (tab === "img") drawMap();
+  var _tc = document.getElementById("trTabCmd");
+  if (_tc) _tc.classList.toggle("active", tab === "cmd");
+  if (tab === "img") { drawMap(); wzRender(); }
   if (tab === "aud") trAudRender();
+  if (tab === "cmd") cmdRender();
 }
 
 /* ---------- CỘT TRÁI: lớp + ảnh ---------- */
 function renderTrainer() {
-  for (var k = 0; k < 2; k++) {
-    var cls = k === 0 ? "face" : "desk";
-    var cap = cls === "face" ? "Face" : "Desk";
-    var cnt = document.getElementById("trCnt" + cap);
-    var n = train[cls].length;
-    cnt.textContent = n > 6 ? n + " ảnh" : n + " / 6 ảnh";
-    var box = document.getElementById("trThumbs" + cap);
-    box.innerHTML = "";
-    train[cls].forEach(function (t, i) {
-      var d = document.createElement("div");
-      d.className = "thumb"; d.dataset.cls = cls; d.dataset.i = i;
-      d.title = t.label + " — Độ sáng " + t.b + ", Độ tương phản " + t.c;
-      d.innerHTML = '<img src="' + t.thumb + '" alt=""><button class="del" title="Xóa ảnh này">✕</button>';
-      d.querySelector(".del").onclick = function (ev) { ev.stopPropagation(); trDel(cls, i); };
-      d.onclick = function () {
-        document.getElementById("trStep").textContent = "Ảnh “" + t.label + "” — Độ sáng " + t.b + " • Độ tương phản " + t.c + " — đây chính là vị trí chấm của nó trên bản đồ.";
-        showInspector(t);
-      };
-      box.appendChild(d);
-    });
-    for (var i = train[cls].length; i < 6; i++) {
-      var e = document.createElement("div"); e.className = "thumb empty"; e.textContent = "+"; box.appendChild(e);
-    }
-    var nm = document.querySelector(".tr-bar-name-" + cls);
-    if (nm) nm.textContent = trDName(cls);
-  }
+  /* v9: tab Hình ảnh cũ (3 cột) đã thay bằng wizard 3 bước — chỉ cập nhật wizard + số chấm */
+  if (typeof wzRender === "function") wzRender();
   var total = train.face.length + train.desk.length;
-  document.getElementById("trMapCount").textContent = total === 0 ? "hộp đang trống" : total + " chấm đã lưu";
+  var mc = document.getElementById("wzMapInfo");
+  if (mc) mc.textContent = "Hộp đen: " + total + " chấm đã lưu (" + train.face.length + " mặt thầy + " + train.desk.length + " bàn ghế — đủ 16 chấm khi đủ 10 ảnh mặt thầy).";
 }
 function trDel(cls, i) {
   if (cls === "desk" && train.desk.length <= 1) { toast("Lớp bàn ghế đã có sẵn — giữ lại ít nhất 1 ảnh để máy còn biết “không phải mặt thầy” là gì."); return; }
@@ -2349,7 +2392,7 @@ async function trTrain() {
     document.getElementById("trProgBar").style.width = Math.round((i + 1) / items.length * 100) + "%";
     nnTrainStep("img", [t.b / 100, t.c / 100], t.cls === "face" ? 0 : 1);
     nnDraw("nnCanvasT", "img", [t.b / 100, t.c / 100], (i + 1) / items.length);
-    document.getElementById("nnCapT").textContent = "Vừa ghi nhận ảnh " + (i + 1) + "/" + items.length + " — lớp “" + trDName(t.cls) + "” (S " + t.b + " • T " + t.c + ") → trọng số về phía lớp đó tăng lên.";
+    var _ncT = document.getElementById("nnCapT"); if (_ncT) _ncT.textContent = "Vừa ghi nhận ảnh " + (i + 1) + "/" + items.length + " — lớp “" + trDName(t.cls) + "” (S " + t.b + " • T " + t.c + ") → trọng số về phía lớp đó tăng lên.";
     drawMap();
     await trSleep(450);
     if (el) el.classList.remove("training");
@@ -2756,9 +2799,10 @@ function trMirrorViews(){
 function trUpdateRing(cls, n){
   var cap = cls === "face" ? "Face" : "Desk";
   var ring = document.getElementById("trRing" + cap), cnt = document.getElementById("trHoldCnt" + cap);
-  var C = 119.4, p = Math.max(0, Math.min(6, n));
-  if (ring) ring.style.strokeDashoffset = (C * (1 - p / 6)).toFixed(1);
-  if (cnt) cnt.textContent = n > 0 ? n + " / 6" : "";
+  var _mx = cls === "face" ? FACE_MAX : DESK_MAX;
+  var C = 119.4, p = Math.max(0, Math.min(_mx, n));
+  if (ring) ring.style.strokeDashoffset = (C * (1 - p / _mx)).toFixed(1);
+  if (cnt) cnt.textContent = n > 0 ? n + " / " + _mx : "";
 }
 function trAudUpdateRing(kind, n){
   var cap = kind === "teacher" ? "Teacher" : "Noise";
@@ -2882,7 +2926,7 @@ function closeNnWatch(){
 var flMode = 'learn', flIdx = -1, flTimer = null, flData = null;
 var FL_BOXES = {
   learn: [
-    {ico:'📷', name:'Chụp ảnh', sub:'6 ảnh mặt thầy'},
+    {ico:'📷', name:'Chụp ảnh', sub:'10 ảnh mặt thầy'},
     {ico:'🔢', name:'Thành 2 con số', sub:''},
     {ico:'📦', name:'Thành 1 chấm', sub:''},
     {ico:'✅', name:'Học xong', sub:''}
@@ -2899,7 +2943,7 @@ var FL_EXPLAIN = {
     'Thầy chụp ảnh, máy nhận ảnh đó.',
     'Ảnh đổi thành 2 con số.',
     '2 con số thành 1 chấm.',
-    'Đủ 12 chấm là học xong.'
+    'Đủ 16 chấm là học xong (10 mặt thầy + 6 bàn ghế).'
   ],
   guess: [
     'Chụp 1 ảnh mới để thử.',
@@ -2952,7 +2996,7 @@ function flRender(){
     if(flMode === 'learn'){
       if(i === 1) sub = 'Sáng ' + flData.b + ' • Tương phản ' + flData.c;
       if(i === 2) sub = 'Trong hộp: ' + flData.total + ' chấm';
-      if(i === 3) sub = 'Hiện có ' + flData.total + ' / 12 chấm';
+      if(i === 3) sub = 'Hiện có ' + flData.total + ' / 16 chấm';
     } else {
       if(i === 1) sub = 'Sáng ' + flData.b + ' • Tương phản ' + flData.c;
       if(i === 2) sub = '3 chấm gần nhất: ' + flData.nearBlue + ' xanh • ' + flData.nearOrange + ' cam';
@@ -3141,5 +3185,425 @@ function nwRender(){
     </div>
   </div>
 </div>
+
+<script>
+/* ================= v9: lưu dữ liệu + wizard 3 bước + lệnh giọng "đứng dậy" ================= */
+/* --- IndexedDB: DB "bai10ai-v9", store "kv" --- */
+var idbDB = null, idbPromise = null;
+function idbOpen(){
+  if (idbPromise) return idbPromise;
+  idbPromise = new Promise(function(res, rej){
+    if (!("indexedDB" in window)) { rej(new Error("no-idb")); return; }
+    var rq = indexedDB.open("bai10ai-v9", 1);
+    rq.onupgradeneeded = function(){ rq.result.createObjectStore("kv"); };
+    rq.onsuccess = function(){ idbDB = rq.result; res(idbDB); };
+    rq.onerror = function(){ rej(rq.error || new Error("idb-open")); };
+  });
+  return idbPromise;
+}
+function idbGet(key){
+  return idbOpen().then(function(db){
+    return new Promise(function(res, rej){
+      var rq = db.transaction("kv", "readonly").objectStore("kv").get(key);
+      rq.onsuccess = function(){ res(rq.result || null); };
+      rq.onerror = function(){ rej(rq.error || new Error("idb-get")); };
+    });
+  }).catch(function(){ return null; });
+}
+function idbPut(key, val){
+  return idbOpen().then(function(db){
+    return new Promise(function(res, rej){
+      var rq = db.transaction("kv", "readwrite").objectStore("kv").put(val, key);
+      rq.onsuccess = function(){ res(true); };
+      rq.onerror = function(){ rej(rq.error || new Error("idb-put")); };
+    });
+  }).catch(function(){ return false; });
+}
+function idbDel(key){
+  return idbOpen().then(function(db){
+    return new Promise(function(res, rej){
+      var rq = db.transaction("kv", "readwrite").objectStore("kv").delete(key);
+      rq.onsuccess = function(){ res(true); };
+      rq.onerror = function(){ rej(rq.error || new Error("idb-del")); };
+    });
+  }).catch(function(){ return false; });
+}
+/* --- Lưu / tải 10 ảnh mặt thầy --- */
+function face10Items(){
+  return train.face.slice(0, FACE_MAX).map(function(t){
+    return {thumb: t.thumb, b: t.b, c: t.c, label: t.label, savedAt: t.savedAt || Date.now()};
+  });
+}
+function saveFace10(){
+  return idbPut("face10", {savedAt: Date.now(), items: face10Items()});
+}
+function restoreFace10(){
+  return idbGet("face10").then(function(rec){
+    if (!rec || !rec.items || !rec.items.length) return 0;
+    var imgs = [];
+    var loaded = rec.items.map(function(it){
+      return new Promise(function(res){
+        var im = new Image();
+        im.onload = function(){ res(im); };
+        im.onerror = function(){ res(null); };
+        im.src = it.thumb;
+      });
+    });
+    return Promise.all(loaded).then(function(list){
+      train.face = [];
+      rec.items.forEach(function(it, i){
+        var im = list[i];
+        train.face.push({cls:"face", b:it.b, c:it.c, bright:1, crop:1, thumb:it.thumb, imgEl:im, label:it.label || ("Thầy Hưng #" + (i+1)), savedAt: it.savedAt});
+      });
+      window.__face10SavedAt = rec.savedAt;
+      renderThumbs(); drawMap(); wzRender();
+      return train.face.length;
+    });
+  });
+}
+/* --- Bọc các hàm cũ để lưu/xóa IndexedDB cho khớp --- */
+(function(){
+  var _closeTrainer = closeTrainer;
+  closeTrainer = function(){ try{ wzStopCam(); }catch(e){} try{ cmdListenStop(); }catch(e){} try{ cmdRecStop(); }catch(e){} _closeTrainer(); };
+  var _trDel = trDel;
+  trDel = function(cls, i){ _trDel(cls, i); if (cls === "face") saveFace10(); };
+  var _trClear = trClear;
+  trClear = function(cls){ _trClear(cls); if (cls === "face") saveFace10(); };
+  var _resetAll = resetAll;
+  resetAll = function(){ _resetAll(); idbDel("face10"); };
+})();
+
+/* ================= Wizard 3 bước ================= */
+var wzStep = 1, wzStream = null, wzBusy = false;
+function wzShow(n){
+  wzStep = n;
+  [1,2,3].forEach(function(i){
+    var p = document.getElementById("wzStep"+i);
+    if (p) p.classList.toggle("on", i===n);
+    var c = document.getElementById("wzChip"+i);
+    if (c){
+      c.classList.toggle("on", i===n);
+      c.classList.toggle("done", i<n || (i===1 && train.face.length>=FACE_MAX) || (i===2 && trTrained));
+    }
+  });
+  if (n===1) wzRender();
+  if (n===2) { var t2 = document.getElementById("wzTo3"); if (t2) t2.disabled = !trTrained; }
+}
+function wzRender(){
+  var grid = document.getElementById("wzGrid"); if (!grid) return;
+  var n = train.face.length;
+  var cnt = document.getElementById("wzCount");
+  if (cnt){ cnt.textContent = "Đã chụp: " + n + " / 10"; cnt.classList.toggle("ok", n>=FACE_MAX); }
+  grid.innerHTML = "";
+  for (var i=0;i<FACE_MAX;i++){
+    var d = document.createElement("div");
+    d.className = "wz-slot" + (i<n ? " filled" : "");
+    if (i<n){
+      var t = train.face[i];
+      d.innerHTML = '<span class="num">'+(i+1)+'</span><img src="'+t.thumb+'" alt="Ảnh '+(i+1)+'"><button class="del" title="Xóa ảnh này">✕</button>';
+      (function(idx){ d.querySelector(".del").onclick = function(ev){ ev.stopPropagation(); trDel("face", idx); }; })(i);
+    } else {
+      d.innerHTML = '<span>'+(i+1)+'</span>';
+    }
+    grid.appendChild(d);
+  }
+  var to2 = document.getElementById("wzTo2"); if (to2) to2.disabled = n < FACE_MAX;
+  var s1 = document.getElementById("wzStatus1");
+  if (s1){
+    if (n>=FACE_MAX && window.__face10SavedAt && n===10){
+      var dt = new Date(window.__face10SavedAt);
+      s1.textContent = "✅ Đã có sẵn 10 ảnh thầy Hưng (lưu " + dt.toLocaleDateString("vi-VN") + ") — sang bước 2 bấm HUẤN LUYỆN là dùng ngay.";
+    }
+    else if (n>=FACE_MAX) s1.textContent = "✅ Đủ 10 ảnh rồi — bấm “➡ Sang bước 2 — Huấn luyện”.";
+    else if (n>0) s1.textContent = "Đã chụp " + n + "/10 — chụp thêm " + (FACE_MAX-n) + " ảnh nữa.";
+    else s1.textContent = "Chưa chụp ảnh nào — bấm “📷 Bật camera” rồi chụp.";
+  }
+  var mc = document.getElementById("wzMapInfo");
+  if (mc){
+    var total = train.face.length + train.desk.length;
+    mc.textContent = "Hộp đen: " + total + " chấm đã lưu (" + train.face.length + " mặt thầy + " + train.desk.length + " bàn ghế — đủ 16 chấm khi đủ 10 ảnh mặt thầy).";
+  }
+}
+async function wzEnsureCam(){
+  var off = document.getElementById("wzViewOff");
+  if (wzStream) return true;
+  try{
+    wzStream = await navigator.mediaDevices.getUserMedia({video:{width:{ideal:640}, height:{ideal:480}}});
+    var v = document.getElementById("wzVideo");
+    v.srcObject = wzStream;
+    if (off) off.style.display = "none";
+    var b = document.getElementById("wzCamBtn"); if (b) b.textContent = "📷 Camera đang bật";
+    return true;
+  }catch(e){
+    if (off) off.textContent = trCamErrText(e) + " — cứ dùng “🖼️ Dùng 6 ảnh mẫu” ở dưới.";
+    toast("Không mở được camera — dùng ảnh mẫu.");
+    return false;
+  }
+}
+function wzStopCam(){
+  if (wzStream){ wzStream.getTracks().forEach(function(t){ t.stop(); }); wzStream = null; }
+  var v = document.getElementById("wzVideo"); if (v) v.srcObject = null;
+  var off = document.getElementById("wzViewOff"); if (off) off.style.display = "flex";
+  var b = document.getElementById("wzCamBtn"); if (b) b.textContent = "📷 Bật camera";
+}
+async function wzWaitVideo(){
+  for (var i=0;i<25;i++){
+    var v = document.getElementById("wzVideo");
+    if (v && v.readyState>=2 && v.videoWidth>0) return true;
+    await new Promise(function(r){ setTimeout(r,100); });
+  }
+  return false;
+}
+async function wzSnap(){
+  if (wzBusy) return;
+  if (train.face.length >= FACE_MAX){ toast("Đã đủ 10 ảnh rồi — sang bước 2."); return; }
+  var ok = await wzEnsureCam();
+  if (!ok) return;
+  var ready = await wzWaitVideo();
+  if (!ready){ toast("Camera chưa sẵn sàng — bấm lại."); return; }
+  wzBusy = true;
+  try{
+    var v = document.getElementById("wzVideo");
+    var cv = document.createElement("canvas"); cv.width=480; cv.height=360;
+    cv.getContext("2d").drawImage(v, 0, 0, 480, 360);
+    var url = cv.toDataURL("image/jpeg", 0.85);
+    var img = new Image();
+    await new Promise(function(res, rej){ img.onload=res; img.onerror=rej; img.src=url; });
+    var f = computeFeatures(img, 1, 1);
+    train.face.push({cls:"face", b:f.b, c:f.c, bright:1, crop:1, thumb:url, imgEl:img, label:"Thầy Hưng #"+(train.face.length+1), savedAt:Date.now()});
+    window._teacherImg = img;
+    var fl = document.getElementById("wzFlash");
+    if (fl){ fl.classList.remove("go"); void fl.offsetWidth; fl.classList.add("go"); }
+    saveFace10(); renderThumbs(); drawMap(); wzRender();
+    if (train.face.length >= FACE_MAX) {
+      toast("✅ Đủ 10 ảnh rồi — sang bước 2 bấm HUẤN LUYỆN.");
+      var _t2 = document.getElementById("wzTo2");
+      if (_t2) _t2.scrollIntoView({behavior:"smooth", block:"center"});
+    }
+    else toast("Đã chụp ảnh " + train.face.length + "/10.");
+  }catch(e){
+    toast("⚠️ Không chụp được ảnh (" + (e.name||e.message||"lỗi") + ").");
+  }
+  wzBusy = false;
+}
+function wzLoadSample(){
+  addAll("face"); saveFace10(); wzRender();
+  var s1 = document.getElementById("wzStatus1");
+  if (s1) s1.textContent = "Đã nạp 6 ảnh mẫu — chụp thêm " + (FACE_MAX - train.face.length) + " ảnh thật nữa cho đủ 10.";
+}
+function wzResetFace(){
+  train.face = []; fixedDone = false; trTrained = false; nnTrained.img = false;
+  idbDel("face10");
+  renderThumbs(); drawMap(); wzRender();
+  var s2 = document.getElementById("trStep");
+  if (s2) s2.textContent = "Đã xóa 10 ảnh — chụp lại từ bước 1 rồi bấm “HUẤN LUYỆN”.";
+  toast("Đã xóa 10 ảnh mặt thầy — chụp lại từ đầu.");
+}
+function wzNext(n){
+  if (n===2 && train.face.length < FACE_MAX){ toast("Chụp đủ 10 ảnh ở bước 1 trước đã."); return; }
+  if (n===3 && !trTrained){ toast("Bấm “HUẤN LUYỆN” ở bước 2 trước đã."); return; }
+  wzShow(n);
+}
+async function wzTrain(){
+  if (train.face.length < FACE_MAX){ toast("Chụp đủ 10 ảnh ở bước 1 trước đã."); return; }
+  trPreloadDesk();
+  await trTrain();
+  var s2 = document.getElementById("trStep");
+  if (s2 && trTrained) s2.textContent = "✅ Học xong! Máy đã lưu " + train.face.length + " chấm “Mặt thầy” + " + train.desk.length + " chấm “Bàn ghế”. Sang bước 3 thử ngay.";
+  var t3 = document.getElementById("wzTo3"); if (t3) t3.disabled = !trTrained;
+  var c2 = document.getElementById("wzChip2"); if (c2 && trTrained) c2.classList.add("done");
+}
+async function wzTest(){
+  if (!trTrained){ toast("Bấm “HUẤN LUYỆN” ở bước 2 trước đã."); return; }
+  var ok = await wzEnsureCam();
+  if (!ok) return;
+  var ready = await wzWaitVideo();
+  if (!ready){ toast("Camera chưa sẵn sàng — bấm lại."); return; }
+  try{
+    var v = document.getElementById("wzVideo");
+    var cv = document.createElement("canvas"); cv.width=480; cv.height=360;
+    cv.getContext("2d").drawImage(v, 0, 0, 480, 360);
+    var url = cv.toDataURL("image/jpeg", 0.85);
+    var img = new Image();
+    await new Promise(function(res, rej){ img.onload=res; img.onerror=rej; img.src=url; });
+    var f = computeFeatures(img, 1, 1);
+    var p = predict(f);
+    var win = p.win === CLASSES.face.name;
+    var vd = document.getElementById("wzVerdict");
+    vd.style.display = "block";
+    vd.className = "wz-verdict " + (win ? "ok" : "bad");
+    vd.innerHTML = (win ? "✅ ĐÂY LÀ MẶT THẦY" : "❌ KHÔNG PHẢI MẶT THẦY") + "<br><span style='font-size:22px;'>Chắc chắn " + p.conf + "% • Độ sáng " + f.b + " • Độ tương phản " + f.c + "</span>";
+    var log = document.getElementById("wzLog");
+    var row = document.createElement("div");
+    row.textContent = "Thử " + (log.children.length+1) + " — S " + f.b + " • T " + f.c + " → " + (win ? "✅ Mặt thầy (" + p.conf + "%)" : "❌ Không phải mặt thầy (" + p.conf + "%)");
+    log.insertBefore(row, log.firstChild);
+    while (log.children.length > 6) log.removeChild(log.lastChild);
+    var fl = document.getElementById("wzFlash");
+    if (fl){ fl.classList.remove("go"); void fl.offsetWidth; fl.classList.add("go"); }
+  }catch(e){ toast("⚠️ Không chụp được ảnh thử (" + (e.name||e.message||"lỗi") + ")."); }
+}
+
+/* ================= Lệnh giọng nói "đứng dậy" ================= */
+var cmdSamples = [];
+var cmdRec = null, cmdRecStream = null, cmdRecChunks = [], cmdRecStartT = 0, cmdRecTimer = null;
+var cmdRecog = null, cmdListening = false, cmdRecogErr = false;
+function cmdNorm(s){ return (s||"").toLowerCase().replace(/đ/g,"d").normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z ]/g," ").replace(/\s+/g," ").trim(); }
+function cmdRender(){
+  var box = document.getElementById("cmdSamples"); if (!box) return;
+  box.innerHTML = "";
+  for (var i=0;i<3;i++){
+    var d = document.createElement("div");
+    var smp = cmdSamples[i];
+    if (smp){
+      d.className = "cmd-sample got";
+      var tm = new Date(smp.savedAt);
+      d.innerHTML = "✅ Mẫu " + (i+1) + " — “đứng dậy”<br><span style='font-size:15px;color:#94A3B8;'>" + tm.toLocaleTimeString("vi-VN") + " • " + (smp.durMs/1000).toFixed(1) + " giây</span><br><button class='btn-navy' data-i='"+i+"'>▶ Nghe lại</button>";
+      (function(idx){ d.querySelector("button").onclick = function(){ var sm = cmdSamples[idx]; if (!sm) return; var a = new Audio(sm.url || URL.createObjectURL(sm.blob)); a.play(); }; })(i);
+    } else {
+      d.className = "cmd-sample";
+      d.innerHTML = "Mẫu " + (i+1) + " — chưa thu";
+    }
+    box.appendChild(d);
+  }
+  var st = document.getElementById("cmdRecStatus");
+  if (st){
+    if (cmdSamples.length >= 3) st.textContent = "✅ Đã huấn luyện xong 3 mẫu giọng “đứng dậy” — sang bước 2, bấm “Bắt đầu nghe lệnh”.";
+    else if (cmdSamples.length > 0) st.textContent = "Đã thu " + cmdSamples.length + "/3 mẫu — thu thêm " + (3-cmdSamples.length) + " mẫu nữa.";
+    else st.textContent = "Chưa thu mẫu nào — bấm mic rồi nói “đứng dậy”.";
+  }
+  var sn = document.getElementById("cmdSavedNote");
+  if (sn) sn.style.display = cmdSamples.length >= 3 ? "block" : "none";
+  var lb = document.getElementById("cmdListenBtn"); if (lb) lb.disabled = cmdSamples.length < 3;
+  var ls = document.getElementById("cmdListenStatus");
+  if (ls && !cmdListening) ls.textContent = cmdSamples.length >= 3 ? "Đã sẵn sàng — bấm “Bắt đầu nghe lệnh” rồi hô “đứng dậy”." : "Chưa nghe — thu đủ 3 mẫu ở bước 1 rồi bấm “Bắt đầu nghe lệnh”.";
+}
+function cmdSaveVoice(){
+  var arr = cmdSamples.map(function(smp){ return {blob:smp.blob, savedAt:smp.savedAt, durMs:smp.durMs}; });
+  idbPut("voiceCmd", {savedAt: Date.now(), samples: arr});
+}
+function cmdRestoreVoice(){
+  return idbGet("voiceCmd").then(function(rec){
+    if (!rec || !rec.samples || !rec.samples.length) return 0;
+    cmdSamples = rec.samples.map(function(smp){ return {blob:smp.blob, savedAt:smp.savedAt, durMs:smp.durMs, url: URL.createObjectURL(smp.blob)}; });
+    cmdRender();
+    return cmdSamples.length;
+  });
+}
+async function cmdRecToggle(){
+  var btn = document.getElementById("cmdRecBtn");
+  if (cmdRec){ cmdRecStop(); return; }
+  if (cmdSamples.length >= 3){ toast("Đã đủ 3 mẫu rồi — muốn thu lại thì bấm “🗑 Xóa dữ liệu giọng đã lưu”."); return; }
+  try{
+    cmdRecStream = await navigator.mediaDevices.getUserMedia({audio:true});
+  }catch(e){
+    toast("⚠️ Không mở được mic (" + (e.name||"lỗi") + "). Kiểm tra quyền mic rồi bấm lại.");
+    return;
+  }
+  cmdRecChunks = [];
+  try{
+    cmdRec = new MediaRecorder(cmdRecStream);
+  }catch(e){
+    toast("⚠️ Trình duyệt này không thu được âm thanh (MediaRecorder không chạy).");
+    cmdRecStream.getTracks().forEach(function(t){ t.stop(); }); cmdRecStream = null;
+    return;
+  }
+  cmdRec.ondataavailable = function(ev){ if (ev.data && ev.data.size) cmdRecChunks.push(ev.data); };
+  cmdRec.onstop = function(){
+    var blob = new Blob(cmdRecChunks, {type: (cmdRec && cmdRec.mimeType) || "audio/webm"});
+    var dur = Date.now() - cmdRecStartT;
+    cmdSamples.push({blob: blob, savedAt: Date.now(), durMs: dur, url: URL.createObjectURL(blob)});
+    cmdSaveVoice(); cmdRender();
+    toast("Đã thu mẫu " + cmdSamples.length + "/3 — “đứng dậy”.");
+    if (cmdRecStream){ cmdRecStream.getTracks().forEach(function(t){ t.stop(); }); cmdRecStream = null; }
+    if (btn) btn.textContent = "🎙️ Thu 1 mẫu “đứng dậy”";
+  };
+  cmdRec.start();
+  cmdRecStartT = Date.now();
+  if (btn) btn.textContent = "🔴 Đang thu… bấm để dừng";
+  clearTimeout(cmdRecTimer);
+  cmdRecTimer = setTimeout(function(){ if (cmdRec) cmdRecStop(); }, 4000);
+}
+function cmdRecStop(){
+  clearTimeout(cmdRecTimer);
+  if (cmdRec && cmdRec.state !== "inactive"){ try{ cmdRec.stop(); }catch(e){} }
+  cmdRec = null;
+  var btn = document.getElementById("cmdRecBtn");
+  if (btn) btn.textContent = "🎙️ Thu 1 mẫu “đứng dậy”";
+}
+function cmdClearVoice(){
+  cmdSamples = [];
+  idbDel("voiceCmd");
+  cmdRender();
+  toast("Đã xóa dữ liệu giọng đã lưu — thu lại 3 mẫu từ đầu.");
+}
+function cmdStandUp(src){
+  document.querySelectorAll("#cmdClass .hs").forEach(function(el){ el.classList.add("standing"); });
+  var cap = document.getElementById("cmdClassCap");
+  if (cap) cap.textContent = "6 em đang đứng — hô “ngồi xuống” là cả lớp ngồi lại.";
+  var b = document.getElementById("cmdBanner");
+  if (b){ b.className = "cmd-banner show"; b.textContent = src === "voice" ? "🔊 NGHE ĐƯỢC: ĐỨNG DẬY!" : "👆 THẦY BẤM NÚT: CẢ LỚP ĐỨNG DẬY!"; }
+}
+function cmdSitDown(src){
+  document.querySelectorAll("#cmdClass .hs").forEach(function(el){ el.classList.remove("standing"); });
+  var cap = document.getElementById("cmdClassCap");
+  if (cap) cap.textContent = "6 em đang ngồi — hô “đứng dậy” là cả lớp đứng lên.";
+  var b = document.getElementById("cmdBanner");
+  if (b){ b.className = "cmd-banner show sit"; b.textContent = src === "voice" ? "🔊 NGHE ĐƯỢC: NGỒI XUỐNG!" : "👆 THẦY BẤM NÚT: CẢ LỚP NGỒI XUỐNG!"; }
+}
+function cmdListenStart(){
+  if (cmdSamples.length < 3){ toast("Thu đủ 3 mẫu giọng “đứng dậy” ở bước 1 trước đã."); return; }
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  var st = document.getElementById("cmdListenStatus");
+  if (!SR){
+    if (st) st.textContent = "⚠️ Trình duyệt này không có nhận diện giọng nói — dùng 2 nút “Cho cả lớp đứng dậy / ngồi xuống” ở dưới.";
+    toast("Trình duyệt này không có nhận diện giọng nói.");
+    return;
+  }
+  try{
+    cmdRecog = new SR();
+    cmdRecog.lang = "vi-VN"; cmdRecog.interimResults = true; cmdRecog.continuous = true;
+    cmdRecogErr = false;
+    var finalTxt = "";
+    cmdRecog.onresult = function(ev){
+      var interim = "";
+      for (var i = ev.resultIndex; i < ev.results.length; i++){
+        var tr = ev.results[i][0].transcript;
+        if (ev.results[i].isFinal) finalTxt += tr; else interim += tr;
+      }
+      var all = finalTxt + interim;
+      var tp = document.getElementById("cmdTranscript");
+      if (tp) tp.innerHTML = all || "—";
+      var norm = cmdNorm(all);
+      if (norm.indexOf("dung day") !== -1){ finalTxt = ""; cmdStandUp("voice"); }
+      else if (norm.indexOf("ngoi xuong") !== -1){ finalTxt = ""; cmdSitDown("voice"); }
+    };
+    cmdRecog.onerror = function(ev){
+      cmdRecogErr = true;
+      if (st) st.textContent = "⚠️ Nhận diện giọng nói báo lỗi: " + (ev.error || "không rõ") + " — dùng 2 nút bấm ở dưới, cả lớp vẫn đứng dậy / ngồi xuống được.";
+    };
+    cmdRecog.onend = function(){ if (cmdListening && !cmdRecogErr){ try{ cmdRecog.start(); }catch(e){} } };
+    cmdRecog.start();
+    cmdListening = true;
+    if (st) st.textContent = "🔴 Đang nghe… thầy hô “đứng dậy” hoặc “ngồi xuống”.";
+    var b1 = document.getElementById("cmdListenBtn"); if (b1) b1.disabled = true;
+    var b2 = document.getElementById("cmdListenStopBtn"); if (b2) b2.disabled = false;
+  }catch(e){
+    if (st) st.textContent = "⚠️ Không khởi động được nhận diện giọng nói (" + (e.message||"lỗi") + ") — dùng 2 nút bấm ở dưới.";
+  }
+}
+function cmdListenStop(){
+  cmdListening = false;
+  if (cmdRecog){ try{ cmdRecog.stop(); }catch(e){} cmdRecog = null; }
+  var st = document.getElementById("cmdListenStatus");
+  if (st) st.textContent = "Đã dừng nghe.";
+  var b1 = document.getElementById("cmdListenBtn"); if (b1) b1.disabled = cmdSamples.length < 3;
+  var b2 = document.getElementById("cmdListenStopBtn"); if (b2) b2.disabled = true;
+}
+
+/* --- v9: tải lại dữ liệu đã lưu khi mở app --- */
+restoreFace10();
+cmdRestoreVoice();
+</script>
+
 </body>
 </html>
