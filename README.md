@@ -1,104 +1,61 @@
 # AI Học Nhìn Ảnh — Tiết 9 • Lớp 7 • Mã 7.C4.1
 
 App trình chiếu dạy bài **"Vấn đề đạo đức nảy sinh từ dữ liệu huấn luyện AI"** —
-mở hộp đen ra xem máy học như thế nào. Chạy offline bằng Chrome, một file HTML duy nhất,
+mở hộp đen ra xem máy học như thế nào. Chạy bằng Chrome, một file HTML duy nhất,
 không cần cài đặt, không cần tài khoản.
 
 Trang live: https://ngochung3789-boop.github.io/bai10AI/
 
 ## Bản đang chạy (live)
 
-- **index.html — v8** (13/11/2026): thêm màn **🌊 Xem luồng chạy** — thầy bấm 1 nút
-  là thấy ảnh đi đâu, hộp đen làm gì, rồi ra kết quả gì. Chỉ 4 ô to xếp ngang,
-  nối bằng mũi tên to, mỗi ô 1 hình + 1 câu ngắn, chữ to, không số liệu phụ,
-  không công thức, không nơ-ron.
-  - Hai chế độ chuyển bằng 2 nút to trên cùng:
-    **📥 LÚC HỌC — nạp ảnh:** ① Chụp ảnh → ② Ảnh thành 2 con số (Độ sáng,
-    Độ tương phản) → ③ 2 con số thành 1 chấm, cất vào hộp đen → ④ Đủ 12 chấm
-    là học xong.
-    **🔍 LÚC ĐOÁN — thử ảnh mới:** ① Chụp ảnh mới → ② Ảnh thành 2 con số →
-    ③ Hộp đen đo khoảng cách tới 12 chấm, lấy 3 chấm gần nhất → ④ Bên nào
-    đông hơn thì đoán bên đó ("Đây là mặt thầy" hay "Không phải mặt thầy" + %).
-  - Bấm nút **▶ Chạy** thì 1 chấm sáng chạy dọc theo mũi tên, mỗi ô sáng lên
-    lần lượt, mỗi ô sáng lên thì hiện đúng 1 câu giải thích ngắn bên dưới
-    (≤ 12 chữ). Bấm vào 1 ô thì chỉ ô đó sáng + hiện câu của ô đó.
-    Nút **↺ Chạy lại** chạy lại từ ô đầu.
-  - Nút **🌊 Xem luồng chạy** đặt ở slide 2 và trong hệ thống huấn luyện
-    (cạnh nút "Mở hộp đen — xem nơ-ron hoạt động").
-  - Số liệu trong màn này lấy thật từ logic sẵn có trong app (2 con số tính
-    từ ảnh, 3 chấm gần nhất, % chắc chắn) — không bịa số. Chế độ xem nơ-ron
-    của v7 vẫn giữ nguyên; 7 slide, hệ thống huấn luyện và các số liệu kiểm
-    chứng 98/64/51 → 97/86 không đổi.
-  - Muốn dùng ảnh thật: thay 1 file `assets_v8/anh-thay-hung.jpg`
-    (giữ đúng tên file) hoặc chụp bằng webcam trong app.
+- **index.html — v10.4** (15/11/2026): trên nền v10.3, giữ nguyên 3 tab
+  Hình ảnh / Âm thanh / Lệnh lớp học, lệnh giọng "đứng dậy" / "ngồi xuống",
+  cửa kho báu mở bằng giọng "mở cửa", lưu IndexedDB, "Xem luồng chạy",
+  "Mở hộp đen — xem nơ-ron".
 
-## Bản v7 (12/11/2026)
+### v10.4 sửa 2 việc thầy yêu cầu (15/11)
 
-- **bai10AI-v7.html — v7**: 7 slide vừa màn hình TV + hệ thống huấn luyện
-  3 cột kiểu Teachable Machine (tab Hình ảnh / Âm thanh).
-  - **ĐƠN GIẢN HÓA — chỉ chụp mặt thầy:** lớp "Bàn ghế" đã nạp sẵn 6 ảnh mẫu
-    ngay khi mở hệ thống huấn luyện (đúng 6 biến thể như slide 2), thầy không
-    phải bấm gì ở lớp này. Nút "▶️ HUẤN LUYỆN" chỉ cần lớp "Mặt thầy" có ảnh
-    là chạy (≥1 ảnh). Nếu chưa chụp mặt thì app chỉ báo 1 câu:
-    "Chụp ảnh mặt thầy trước đã, rồi bấm Huấn luyện." — không còn câu
-    "Cần ảnh ở cả 2 lớp mới huấn luyện được".
-  - **Tên gọi theo ý thầy:** lớp 1 hiển thị "Mặt thầy", lớp 2 hiển thị
-    "Không phải mặt thầy (bàn ghế — đã có sẵn)". Kết quả đoán hiện
-    "Đây là mặt thầy" / "Không phải mặt thầy" + số %.
-    Dòng hướng dẫn to ngay trên nút Huấn luyện: "Thầy chỉ cần chụp mặt thầy
-    (6 ảnh) — lớp bên kia đã có sẵn rồi."
-  - **🔍 Mở hộp đen — xem nơ-ron hoạt động (mới):** nút to trong hệ thống
-    huấn luyện và ở slide 4. Khi thử 1 ảnh, hộp đen mở ra và chạy CHẬM,
-    TỪNG BƯỚC, mỗi bước 1 việc, chữ to, hình nơ-ron to giữa màn hình:
-    Bước 1 — ảnh vào thành 2 con số (Độ sáng, Độ tương phản);
-    Bước 2 — tín hiệu chạy qua từng nơ-ron lớp ẩn, nơ-ron nào sáng lên thì
-    sáng thật, kèm 1 câu ngắn bằng lời thường;
-    Bước 3 — nơ-ron đầu ra sáng, máy đoán "Đây là mặt thầy" hay
-    "Không phải mặt thầy" + số %;
-    Bước 4 — 1 câu chốt: "Máy đoán theo 3 chấm gần nhất; mạng nơ-ron chỉ
-    minh họa cách ghi nhận việc học".
-    Mỗi bước có nút "Tiếp ›" và nút "▶ Chạy chậm tự động".
-    Nếu sơ đồ nơ-ron minh họa cho kết quả khác với máy, bước 3 nói rõ luôn:
-    máy trong app KHÔNG dùng nơ-ron để đoán.
-  - **Camera/mic tự bật (từ v6):** bấm/giữ nút chụp là camera tự bật ngay,
-    không phải bật ở chỗ khác trước. Bấm 1 cái vào nút "📸 Chụp 1 ảnh" cũng chụp
-    được 1 ảnh; bấm vào chính khung ngắm cũng bật camera. Giữ thu giọng thì mic
-    tự bật. Thả tay trong lúc đang chờ bật thì hủy, không chụp/thu ảnh rác.
-    Nút "📸 Chụp 3 ảnh đủ sáng" / "🌑 Chụp 3 ảnh tối" ở slide 2 cũng tự bật camera.
-  - **Báo lỗi rõ ràng:** bị chặn quyền thì app báo đỏ ngay tại chỗ —
-    "Trình duyệt đang chặn camera cho trang này — bấm biểu tượng camera trên
-    thanh địa chỉ → chọn Cho phép, rồi bấm lại." Không có camera thì báo
-    "Máy này không tìm thấy camera — dùng Tải ảnh lên."
-  - **Giữ để chụp / giữ để thu:** nút to, mỗi lớp có khung ngắm riêng
-    (ảnh: video webcam; giọng: sóng âm chạy thật + độ to). Giữ là chụp/thu liên tiếp,
-    thả ra là dừng; vòng tiến trình chạy, ảnh/mẫu bay vào lưới, số đếm tăng ngay.
-  - **Mạng nơ-ron trong hộp đen:** sơ đồ 3 lớp (vào 2 → ẩn 4 → ra 2) ở slide 4
-    và trong cột giữa hệ thống huấn luyện, cả hai tab Hình ảnh và Âm thanh.
-    Trọng số tính thật từ dữ liệu (quy tắc delta: w mới = w cũ + 0,05 × tín hiệu vào
-    × sai số), số trọng số hiện ngay trên đường nối.
-  - **Ranh giới trung thực (ghi rõ trong app và trong kịch bản):**
-    sơ đồ nơ-ron chỉ minh họa CÁCH mạng nơ-ron ghi nhận việc học.
-    Máy trong app này đoán bằng cách đo khoảng cách 3 chấm gần nhất (k-NN, k=3)
-    như đã kiểm chứng — AI thật dùng mạng nơ-ron với hàng triệu nơ-ron nên
-    không mở ra xem từng cái được.
-  - Số liệu đã đo trên app thật: ảnh đủ sáng 98% đúng; thiếu sáng 64% sai;
-    rất tối 51% sai; bàn ghế 98% đúng. Sau khi thêm 3 ảnh tối: thiếu sáng 97% đúng,
-    rất tối 86% đúng. (Số % là mức chắc chắn tính từ khoảng cách các chấm.)
-    Lưu ý: 6 ảnh mẫu bàn ghế nạp sẵn phải đúng 6 biến thể như slide 2 mới giữ
-    được các số này — đã kiểm chứng lại bằng predict() ở v7.
-  - Ảnh lớp "Mặt thầy" hiện dùng ảnh mẫu (đã ghi nhãn trong app). Muốn dùng ảnh thật:
-    thay 1 file `assets_v7/anh-thay-hung.jpg` (giữ đúng tên file) hoặc chụp bằng webcam
-    trong app.
+1. **Nhận diện đúng mặt thầy (face-api.js, cùng họ công nghệ như Google dùng):**
+   mỗi ảnh mặt thầy (10 ảnh wizard + ảnh đã lưu IndexedDB) tính 1 vector đặc
+   trưng 128 số; lúc xem trực tiếp, đo vector của mặt trong khung rồi so khoảng
+   cách với các vector đã lưu — gần nhất < 0,6 thì "✅ ĐÂY LÀ THẦY HƯNG",
+   mặt người khác (khoảng cách ≥ 0,6) thì "❌ KHÔNG PHẢI MẶT THẦY",
+   không có mặt thì "🚫 Không thấy mặt trong khung hình" và không đoán.
+   Vẽ khung mặt xanh quanh mặt thầy trên video xem trước.
+   Vector lưu kèm ảnh trong IndexedDB nên lần sau mở ra vẫn nhận ra thầy.
+   - Gắn cổng vào MỌI đường đoán: xem trước trực tiếp (vòng 500ms của wizard),
+     thử 1 ảnh, đoán ảnh webcam ở slide, chụp ảnh, wizard — kể cả vòng xem
+     trước 600ms cũ (đã gắn cổng phòng thủ; vòng này vốn không chạy vì không
+     còn phần tử trVideo trong file).
+   - Mất mạng (CDN không tải được) thì dùng FaceDetector rồi ngưỡng tương phản
+     như v10.3, app hiện rõ đang dùng cách nào ("Nhận diện: face-api (Google)"
+     / "Nhận diện: dự phòng").
+2. **Sửa lỗi khôi phục ảnh đã lưu:** trước đây chỉ lưu (saveFace10) mà không
+   tải lại nên mở app lại là mất ảnh; v10.4 gọi restoreFace10() khi mở app.
 
-## Các bản lưu
+### Giữ nguyên bài học
 
-- **bai10AI-v7.html** — v7 (12/11/2026): chỉ cần chụp mặt thầy; xem nơ-ron 4 bước chậm.
+- Bộ phân loại 2 con số (Độ sáng, Độ tương phản) và số liệu 98/64/51 → 97/86
+  giữ nguyên cho phần thử ảnh mẫu trên slide — đó là minh họa "dữ liệu thiếu
+  đa dạng thì máy đoán sai". Chỉ phần xem trực tiếp/chụp ảnh dùng nhận diện
+  mặt thật. Trong app ghi rõ: "Xem trực tiếp: nhận diện đúng mặt thầy bằng
+  đặc trưng khuôn mặt. Thử ảnh mẫu: máy chỉ đo 2 con số nên ảnh tối đoán sai —
+  đó là bài học."
+- Lần nhận diện đầu tiên trên máy yếu mất vài giây để tải model (~7 MB, lần
+  sau trình duyệt nhớ sẵn). Máy thầy (i7) nhận diện trong ~1–3 giây.
 
-- **bai10AI-v6.html** — v6 (12/11/2026): bấm/giữ chụp tự bật camera; vẫn bắt
-  nạp ảnh cả 2 lớp mới huấn luyện được — đã đơn giản hóa ở v7.
+## Kiểm chứng (Playwright, camera giả + ảnh mẫu, 15/11/2026)
 
-## Kịch bản giải thích
+- (a) Mặt trong khung → "ĐÂY LÀ THẦY HƯNG", khoảng cách 0,09, khung mặt hiện;
+  mặt ra khỏi khung (tường sáng) → "Không thấy mặt trong khung hình", không đoán.
+- (b) Mặt người khác → "KHÔNG PHẢI MẶT THẦY", khoảng cách 0,76.
+- (c) Mặt thầy tối / rất tối → vẫn nhận ra (khoảng cách 0,10 / 0,12).
+- (d) Số liệu slide mẫu 98/64/51 → 97/86 giữ nguyên.
+- (e) Vector còn sau khi tải lại trang (IndexedDB): 6/6 ảnh có vector 128 số.
+- (f) Chặn CDN → dự phòng chạy, app không vỡ, 0 lỗi console chết người.
+- (g) Không tràn 1280×720 và 1920×1080.
 
-`Kich_ban_giai_thich_hop_den_v5.md` (trong thư mục bài dạy, không có trong repo này) —
-lời nói nguyên văn để thầy đọc theo, mỗi câu ≤ 12 chữ, có phần giải thích nơ-ron
-và phần giữ chụp / giữ thu cho cả hai tab.
+## File trong repo
+
+- `index.html` — v10.4 (bản live).
+- `bai10AI-v10-3.html` — v10.3 (bản trước, giữ để đối chiếu).

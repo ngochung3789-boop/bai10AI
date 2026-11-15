@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Học Nhìn Ảnh v10.3 — 7 slide + Hệ thống huấn luyện kiểu Teachable Machine — Mở hộp đen xem máy học</title>
+<title>AI Học Nhìn Ảnh v10.4 — 7 slide + Hệ thống huấn luyện kiểu Teachable Machine — Mở hộp đen xem máy học</title>
 <style>
 
 /* ================= PHONG CÁCH: VIỄN TƯỞNG (SCI-FI) — nền vũ trụ navy tối, viền cyan phát sáng, điểm nhấn cam ================= */
@@ -1314,6 +1314,8 @@ body.v10-dark #wzVideo{filter:brightness(.5) contrast(.85) blur(1px);}
         <p class="wz-status" id="trStep">Chưa huấn luyện — chụp đủ ảnh cả 2 lớp ở bước 1 (10 + 6) rồi bấm “▶️ HUẤN LUYỆN”.</p>
         <p class="tr-note" id="wzMapInfo" style="text-align:center;">Hộp đen: 0 chấm đã lưu.</p>
         <p class="v10-stats">Ảnh sáng đoán đúng 98% • ảnh tối chỉ 51% • thêm ảnh tối → 97%</p>
+        <p class="v10-stats" style="font-size:15px;opacity:.85;" id="faMethodLine">🔍 Nhận diện mặt: đang tải face-api.js…</p>
+        <p class="v10-stats" style="font-size:15px;opacity:.85;">Xem trực tiếp: nhận diện đúng mặt thầy bằng đặc trưng khuôn mặt. Thử ảnh mẫu: máy chỉ đo 2 con số nên ảnh tối đoán sai — đó là bài học.</p>
         <div class="tr-btns" style="justify-content:center; margin-top:14px;">
           <button class="btn-green btn-big wz-big" id="wzTo3" onclick="wzNext(3)" disabled style="display:none">➡ Sang bước 3 — Thử ngay</button>
         </div>
@@ -1355,7 +1357,7 @@ body.v10-dark #wzVideo{filter:brightness(.5) contrast(.85) blur(1px);}
     <div class="bb-panel" id="blackBox">
       <div class="bb-head"><h3>🔍 MỞ HỘP ĐEN — máy làm gì bên trong?</h3><span class="bb-count">Đã có <b id="bbCountNum">0</b> chấm trong hộp đen</span></div>
       <div class="bb-flow" id="bbFlow">
-        <div class="bb-cell" id="bbF1"><div class="bb-ico">📸</div><div class="bb-name">Ảnh vào</div><div class="bb-sub">Chụp 1 ảnh mới</div></div>
+        <div class="bb-cell" id="bbF1"><div class="bb-ico">📸</div><div class="bb-name">Ảnh vào</div><div class="bb-sub">Chụp 1 ảnh mới — phải thấy mặt thầy</div></div>
         <div class="bb-arrow">➜</div>
         <div class="bb-cell" id="bbF2"><div class="bb-ico">🔢</div><div class="bb-name">Thành 2 con số</div><div class="bb-sub">Sáng + tương phản</div></div>
         <div class="bb-arrow">➜</div>
@@ -1873,13 +1875,15 @@ function predict(pt){
   return {win, conf, near, votes};
 }
 
-/* ===== v10.3 — CỔNG KIỂM TRA MẶT (15/11) =====
+/* ===== v10.4 — NHẬN DIỆN ĐÚNG MẶT THẦY: face-api.js → FaceDetector → ngưỡng (15/11) =====
    Lỗi thầy báo: đưa mặt ra khỏi khung mà app vẫn nhận là thầy.
    Cổng này chỉ lo TÌM mặt (như Google/Teachable Machine tìm mặt trước),
    rồi máy vẫn đoán bằng 2 con số + k-NN của bài học như cũ — KHÔNG đổi
    sang MobileNet (đổi thì ảnh tối vẫn nhận đúng, mất điểm bài học).
-   - Chính: FaceDetector có sẵn trong Chrome (offline, không tải gì thêm).
-   - Dự phòng khi trình duyệt không có FaceDetector (đã đo thật trên v10.2):
+   - Chính: face-api.js qua CDN (mô hình tiny-face-detector + face-landmark-68 +
+     face-recognition) — mỗi ảnh mặt thầy tính 1 vector 128 số; gần nhất < 0,6 là thầy.
+   - Sau đó: FaceDetector có sẵn trong Chrome (offline, không tải gì thêm).
+   - Cuối cùng, khi cả hai đều không dùng được (đã đo thật trên v10.2):
      tường phẳng c≈0, mặt dù rất tối vẫn c≥19,4 → tương phản <15 là không mặt;
      khoảng cách >60 so với mọi chấm đã học là lưới thứ hai (riêng khoảng cách
      không tách được tường tối khỏi mặt rất tối nên không dùng một mình). */
@@ -1898,6 +1902,167 @@ function _faceMinDist(f){
 }
 /* Trả về {ok:true} nếu có mặt, {ok:false, lyDo} nếu không.
    video: <video> đang chạy (cho FaceDetector). f: {b,c} đã tính (cho cổng dự phòng). */
+/* ==== v10.4 — NHẬN DIỆN ĐÚNG MẶT THẦY (face-api.js, 128 số đặc trưng) ====
+   Chỉ sáng/tối (2 con số) là chưa đủ — máy phải nhận ra ĐÚNG mặt thầy, không đoán bừa.
+   - Chính: face-api.js qua CDN (tiny-face-detector + face-landmark-68 + face-recognition,
+     cùng họ TensorFlow.js như Google dùng). Mỗi ảnh mặt thầy tính 1 vector 128 số;
+     lúc xem trực tiếp, đo vector mặt trong khung rồi so với các vector đã lưu:
+     gần nhất < 0,6 thì "Đây là thầy Hưng", >= 0,6 thì "Không phải mặt thầy".
+   - Dự phòng khi CDN không tải được: FaceDetector rồi ngưỡng tương phản (v10.3).
+   - Phần thử ảnh mẫu trên slide vẫn dùng 2 con số + k-NN như cũ (đó là bài học). */
+var __faState = 'idle';   /* idle | loading | ready | failed */
+var __faPromise = null;
+var __faModelUrl = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.14/model';
+var __faLibUrl = 'https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js';
+function faLoadScript(src){
+  return new Promise(function(res, rej){
+    var s = document.createElement('script');
+    s.src = src;
+    s.onload = function(){ res(true); };
+    s.onerror = function(){ rej(new Error('script load fail')); };
+    document.head.appendChild(s);
+  });
+}
+function faMethodLine(which){
+  var el = document.getElementById('faMethodLine');
+  if (!el) return;
+  if (which === 'faceapi') el.textContent = '🔍 Nhận diện: face-api (Google) — nhận đúng mặt thầy bằng đặc trưng khuôn mặt.';
+  else el.textContent = '🔍 Nhận diện: dự phòng (FaceDetector + ngưỡng) — cần mạng để tải face-api.js.';
+}
+async function faEnsure(){
+  if (window.faceapi && __faState === 'ready') return true;
+  if (__faState === 'failed') return false;
+  if (__faState === 'loading' && __faPromise) return __faPromise;
+  __faState = 'loading';
+  __faPromise = (async function(){
+    try {
+      if (!window.faceapi) await faLoadScript(__faLibUrl);
+      var fa = window.faceapi;
+      if (!fa || !fa.nets || !fa.nets.tinyFaceDetector) throw new Error('faceapi missing');
+      await fa.nets.tinyFaceDetector.loadFromUri(__faModelUrl);
+      await fa.nets.faceLandmark68Net.loadFromUri(__faModelUrl);
+      await fa.nets.faceRecognitionNet.loadFromUri(__faModelUrl);
+      __faState = 'ready';
+      faMethodLine('faceapi');
+      return true;
+    } catch(e){ __faState = 'failed'; faMethodLine('fallback'); return false; }
+  })();
+  return __faPromise;
+}
+function faDescArray(d){ return Array.prototype.slice.call(d); }
+function faDist(a, b){
+  var s = 0;
+  for (var i = 0; i < 128; i++){ var d = a[i] - b[i]; s += d * d; }
+  return Math.sqrt(s);
+}
+async function faDetectOne(input){
+  /* input: video / img / canvas. Trả về {box, desc} hoặc null (không thấy mặt). Ném lỗi nếu model lỗi. */
+  var fa = window.faceapi;
+  var det = await fa.detectSingleFace(input, new fa.TinyFaceDetectorOptions({inputSize: 320, scoreThreshold: 0.5})).withFaceLandmarks().withFaceDescriptor();
+  if (!det || !det.descriptor) return null;
+  var b = det.detection.box;
+  return { box: {x:b.x, y:b.y, width:b.width, height:b.height}, desc: faDescArray(det.descriptor) };
+}
+function faNearest(desc){
+  var best = null, bd = Infinity;
+  train.face.forEach(function(it, i){
+    if (!it.desc || it.desc.length !== 128) return;
+    var d = faDist(desc, it.desc);
+    if (d < bd){ bd = d; best = i; }
+  });
+  return best === null ? null : {dist: bd, idx: best};
+}
+async function faEnsureDescs(){
+  /* Tính vector cho các ảnh mặt chưa có (ảnh mẫu + ảnh thầy chụp + ảnh khôi phục từ IndexedDB). */
+  if (!await faEnsure()) return 0;
+  var n = 0, shared = null;
+  for (var i = 0; i < train.face.length; i++){
+    var it = train.face[i];
+    if (it.desc && it.desc.length === 128) continue;
+    var src = it.imgEl || null;
+    if (!src) {
+      if (shared === null) { var d0 = await faDetectOne(faceImg); shared = d0 ? d0.desc : false; }
+      if (shared) { it.desc = shared; n++; }
+      continue;
+    }
+    try {
+      var d = await faDetectOne(src);
+      if (d){ it.desc = d.desc; n++; }
+    } catch(e){}
+  }
+  if (n) saveFace10();
+  return n;
+}
+function faceFeaturesFromRegion(video, box){
+  var cv = document.createElement("canvas"); cv.width = 48; cv.height = 48;
+  var cx = cv.getContext("2d");
+  var vw = video.videoWidth || 640, vh = video.videoHeight || 480;
+  if (box && box.width > 20 && box.height > 20) {
+    cx.drawImage(video, box.x, box.y, box.width, box.height, 0, 0, 48, 48);
+  } else {
+    cx.drawImage(video, 0, 0, vw, vh, 0, 0, 48, 48);
+  }
+  if (darkModeOn()) darkenCanvas(cv);
+  var d = cx.getImageData(0, 0, 48, 48).data, n = 48 * 48, sum = 0, s2 = 0, i, L;
+  var lum = new Float32Array(n);
+  for (i = 0; i < n; i++) {
+    L = 0.299 * d[i*4] + 0.587 * d[i*4+1] + 0.114 * d[i*4+2];
+    lum[i] = L; sum += L;
+  }
+  var mean = sum / n;
+  for (i = 0; i < n; i++) { var df = lum[i] - mean; s2 += df * df; }
+  var std = Math.sqrt(s2 / n);
+  return { b: Math.round(mean / 255 * 1000) / 10, c: Math.round(Math.min(100, std / 64 * 100) * 10) / 10 };
+}
+function drawFaceBox(video, box){
+  var ov = document.getElementById("faceBoxOverlay");
+  if (!ov) {
+    ov = document.createElement("div");
+    ov.id = "faceBoxOverlay";
+    ov.style.cssText = "position:fixed;z-index:9999;pointer-events:none;display:none;border:4px solid #22c55e;border-radius:10px;box-shadow:0 0 0 2px rgba(34,197,94,.35), 0 0 18px rgba(34,197,94,.5);";
+    var lb = document.createElement("div");
+    lb.textContent = "👤 ĐÃ THẤY MẶT";
+    lb.style.cssText = "position:absolute;top:-30px;left:-4px;background:#22c55e;color:#fff;font-weight:700;font-size:15px;padding:2px 10px;border-radius:8px;white-space:nowrap;";
+    ov.appendChild(lb);
+    document.body.appendChild(ov);
+  }
+  if (!box || !video) { ov.style.display = "none"; return; }
+  var r = video.getBoundingClientRect();
+  if (!r || r.width < 10 || r.height < 10) { ov.style.display = "none"; return; }
+  var vw = video.videoWidth || 640, vh = video.videoHeight || 480;
+  var sx = r.width / vw, sy = r.height / vh;
+  ov.style.display = "block";
+  ov.style.left = (r.left + box.x * sx) + "px";
+  ov.style.top = (r.top + box.y * sy) + "px";
+  ov.style.width = Math.max(10, box.width * sx) + "px";
+  ov.style.height = Math.max(10, box.height * sy) + "px";
+}
+async function faceRecognize(video, fWhole){
+  /* Trả về {ok, kind, via, box, dist, f}:
+     kind 'teacher' = đúng mặt thầy (ok=true) | 'other' = mặt người khác | 'noface'.
+     f = 2 con số (từ vùng mặt nếu có box, else toàn khung) — để vẽ chấm lên bản đồ. */
+  var f = fWhole || (video && video.readyState >= 2 ? faceFeaturesFromRegion(video, null) : null);
+  if (await faEnsure()) {
+    try {
+      var det = await faDetectOne(video);
+      if (det) {
+        var ff = faceFeaturesFromRegion(video, det.box);
+        drawFaceBox(video, det.box);
+        await faEnsureDescs();
+        var near = faNearest(det.desc);
+        if (near && near.dist < 0.6) return {ok:true, kind:'teacher', via:'faceapi', box:det.box, dist:near.dist, f:ff};
+        if (near) return {ok:false, kind:'other', via:'faceapi', box:det.box, dist:near.dist, f:ff};
+        return {ok:true, kind:'teacher', via:'faceapi-nodesc', box:det.box, dist:null, f:ff};
+      }
+      drawFaceBox(video, null);
+      return {ok:false, kind:'noface', via:'faceapi', box:null, dist:null, f:f};
+    } catch(e){ /* detection lỗi -> dự phòng */ }
+  }
+  var g = await kiemTraMat(video, f);
+  if (!g.ok){ drawFaceBox(video, null); return {ok:false, kind:'noface', via:g.cach, box:null, dist:null, f:f}; }
+  return {ok:true, kind:'teacher', via:g.cach, box:null, dist:null, f:f};
+}
+setTimeout(function(){ try{ faEnsure(); }catch(e){} }, 1200);
 async function kiemTraMat(video, f){
   if (window.FaceDetector) {
     try {
@@ -2038,8 +2203,8 @@ function snapPhoto(){
   const img=new Image();
   img.onload=async ()=>{
     const f=computeFeatures(img,1,1);
-    const g=await kiemTraMat(v,f);
-    if(!g.ok){
+    const r=await faceRecognize(v,f);
+    if(r.kind==='noface'){
       testDot=null; drawMap();
       const box=document.getElementById("result");
       box.className="result show unsure";
@@ -2048,11 +2213,20 @@ function snapPhoto(){
         +'<div class="conclusion">💡 KẾT LUẬN: Máy chỉ đoán khi thấy mặt thật trong khung hình.</div>';
       return;
     }
-    const item={cls:"face", b:f.b, c:f.c, bright:1, crop:1, thumb:url, imgEl:img, label:"Ảnh webcam"};
+    if(r.kind==='other'){
+      testDot=null; drawMap();
+      const boxO=document.getElementById("result");
+      boxO.className="result show unsure";
+      boxO.innerHTML='<h3>❌ KHÔNG PHẢI MẶT THẦY</h3>'
+        +'<div style="font-size:21px;">Nhận diện khuôn mặt • khoảng cách '+(r.dist==null?"?":r.dist.toFixed(2))+' — mặt này khác mặt thầy đã lưu, máy không đoán.</div>'
+        +'<div class="conclusion">💡 KẾT LUẬN: Máy chỉ đoán khi thấy đúng mặt thầy.</div>';
+      return;
+    }
+    const item={cls:"face", b:r.f.b, c:r.f.c, bright:1, crop:1, thumb:url, imgEl:img, label:"Ảnh webcam"};
     showInspector(item);
     if(train.face.length===0 && train.desk.length===0){ toast("Ảnh đã chụp — hãy nạp dữ liệu mẫu trước rồi mới đoán ảnh này."); return; }
-    const p=predict(f);
-    testDot={b:f.b, c:f.c, truth:null, pred:p.win, conf:p.conf, near:p.near};
+    const p=predict(r.f);
+    testDot={b:r.f.b, c:r.f.c, truth:null, pred:p.win, conf:p.conf, near:p.near};
     drawMap(); openBox();
     const box=document.getElementById("result");
     box.className="result show unsure";
@@ -2531,6 +2705,8 @@ function openTrainer(silent) {
   trPreloadDesk();
   if (!deskPreloaded) { setTimeout(function(){ if (trOpen) { trPreloadDesk(); trSync(); } }, 1200); }
   trSync();
+  if (window.__faState === "failed") window.__faState = "idle";
+  faEnsure(); faEnsureDescs();
   if (!silent) toast("Đã mở hệ thống huấn luyện.");
 }
 function closeTrainer() {
@@ -2868,12 +3044,16 @@ function trPreviewTest(key) {
   window._nwThumb = variantThumb(img, t.f, t.crop, 280);
   trShowPrediction(f, t.truth);
 }
-setInterval(function () {
+setInterval(async function () {
   if (!trOpen || !trStream) return;
   if (document.getElementById("trBodyImg").style.display === "none") return;
   var v = document.getElementById("trVideo");
   if (!v || v.readyState < 2) return;
   if (train.face.length === 0) return;
+  /* v10.4: vòng xem trước cũng phải qua cổng nhận diện mặt (trước đây đoán bừa). */
+  var _g600 = await faceRecognize(v, null);
+  if (!_g600.ok) { testDot = null; drawMap(); updateDoor(null); return; }
+  if (!document.getElementById("trGuess")) return; /* khung xem trước cũ đã thay bằng wizard */
   var f = trFrameFeatures();
   trShowPrediction(f, null);
 }, 600);
@@ -3344,7 +3524,7 @@ var FL_BOXES = {
     {ico:'✅', name:'Học xong', sub:''}
   ],
   guess: [
-    {ico:'📷', name:'Chụp ảnh mới', sub:'1 ảnh để thử'},
+    {ico:'📷', name:'Chụp ảnh mới', sub:'1 ảnh để thử — phải thấy mặt thầy trong khung'},
     {ico:'🔢', name:'Thành 2 con số', sub:''},
     {ico:'📦', name:'Đo khoảng cách', sub:''},
     {ico:'✅', name:'', sub:''}
@@ -3358,7 +3538,7 @@ var FL_EXPLAIN = {
     'Đủ 16 chấm là học xong (10 ảnh “Thầy Hưng” + 6 ảnh “Lớp 2”).'
   ],
   guess: [
-    'Chụp 1 ảnh mới để thử.',
+    'Chụp 1 ảnh mới để thử — phải thấy mặt thầy trong khung.',
     'Ảnh mới cũng thành 2 con số.',
     'Đo tới các chấm, lấy 3 chấm gần nhất.',
     'Bên nào đông hơn thì đoán bên đó.'
@@ -3643,7 +3823,7 @@ function idbDel(key){
 /* --- Lưu / tải 10 ảnh mặt thầy --- */
 function face10Items(){
   return train.face.slice(0, FACE_MAX).map(function(t){
-    return {thumb: t.thumb, b: t.b, c: t.c, label: t.label, savedAt: t.savedAt || Date.now()};
+    return {thumb: t.thumb, b: t.b, c: t.c, label: t.label, savedAt: t.savedAt || Date.now(), desc: t.desc || null};
   });
 }
 function saveFace10(){
@@ -3665,7 +3845,7 @@ function restoreFace10(){
       train.face = [];
       rec.items.forEach(function(it, i){
         var im = list[i];
-        train.face.push({cls:"face", b:it.b, c:it.c, bright:1, crop:1, thumb:it.thumb, imgEl:im, label:it.label || (CLASSES.face.name+" #" + (i+1)), savedAt: it.savedAt});
+        train.face.push({cls:"face", b:it.b, c:it.c, bright:1, crop:1, thumb:it.thumb, imgEl:im, label:it.label || (CLASSES.face.name+" #" + (i+1)), savedAt: it.savedAt, desc: it.desc || null});
       });
       window.__face10SavedAt = rec.savedAt;
       renderThumbs(); drawMap(); wzRender();
@@ -3673,6 +3853,11 @@ function restoreFace10(){
     });
   });
 }
+/* v10.4: khôi phục 10 ảnh mặt thầy + vector đặc trưng đã lưu khi mở app —
+   trước đây chỉ lưu (saveFace10) mà không tải lại nên mở lại là mất ảnh. */
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', function(){ restoreFace10(); });
+} else { restoreFace10(); }
 /* --- Bọc các hàm cũ để lưu/xóa IndexedDB cho khớp --- */
 (function(){
   var _closeTrainer = closeTrainer;
@@ -3802,6 +3987,8 @@ async function wzSnap(){
     var g = await kiemTraMat(v, f);
     if (!g.ok){ toast("🚫 Không thấy mặt trong khung hình — đưa mặt vào khung rồi chụp lại."); wzBusy = false; return; }
     train.face.push({cls:"face", b:f.b, c:f.c, bright:1, crop:1, thumb:url, imgEl:img, label:CLASSES.face.name+" #"+(train.face.length+1), savedAt:Date.now()});
+    var _newIt = train.face[train.face.length-1];
+    faDetectOne(img).then(function(_dd){ if (_dd){ _newIt.desc = _dd.desc; saveFace10(); } }).catch(function(){});
     window._teacherImg = img;
     var fl = document.getElementById("wzFlash");
     if (fl){ fl.classList.remove("go"); void fl.offsetWidth; fl.classList.add("go"); }
@@ -3893,8 +4080,8 @@ async function wzTest(){
     var img = new Image();
     await new Promise(function(res, rej){ img.onload=res; img.onerror=rej; img.src=url; });
     var f = computeFeatures(img, 1, 1);
-    var g = await kiemTraMat(v, f);
-    if (!g.ok) {
+    var r = await faceRecognize(v, f);
+    if (r.kind === 'noface') {
       testDot = null; drawMap();
       var vd0 = document.getElementById("wzVerdict");
       if (vd0){ vd0.style.display = "block"; vd0.className = "wz-verdict warn"; vd0.innerHTML = "🚫 <b>Không thấy mặt trong khung hình</b><br><span style='font-size:22px;'>Đưa mặt vào khung rồi bấm thử lại — máy không đoán khi không thấy mặt.</span>"; }
@@ -3903,17 +4090,33 @@ async function wzTest(){
       updateDoor(null);
       return;
     }
+    if (r.kind === 'other') {
+      var _pO = predict(r.f);
+      testDot = {b:r.f.b, c:r.f.c, truth:null, pred:_pO.win, conf:_pO.conf, near:_pO.near};
+      drawMap();
+      var vdO = document.getElementById("wzVerdict");
+      if (vdO){ vdO.style.display = "block"; vdO.className = "wz-verdict bad"; vdO.innerHTML = "❌ <b>KHÔNG PHẢI MẶT THẦY</b><br><span style='font-size:22px;'>Nhận diện khuôn mặt • khoảng cách " + (r.dist==null?"?":r.dist.toFixed(2)) + " — mặt này khác mặt thầy đã lưu.</span>"; }
+      var logO = document.getElementById("wzLog");
+      if (logO){ var rowO = document.createElement("div"); rowO.textContent = "Thử " + (logO.children.length+1) + " — mặt người khác (khoảng cách " + (r.dist==null?"?":r.dist.toFixed(2)) + "), máy không mở cửa."; logO.insertBefore(rowO, logO.firstChild); while (logO.children.length > 6) logO.removeChild(logO.lastChild); }
+      updateDoor(null);
+      return;
+    }
+    f = r.f;
     var p = predict(f);
     testDot = {b:f.b, c:f.c, truth:null, pred:p.win, conf:p.conf, near:p.near};
     drawMap();
-    var win = p.win === CLASSES.face.name;
+    var win = (r.via === 'faceapi' && r.kind === 'teacher') ? true : p.win === CLASSES.face.name;
     var vd = document.getElementById("wzVerdict");
     vd.style.display = "block";
     vd.className = "wz-verdict " + (win ? "ok" : "bad");
-    vd.innerHTML = (win ? "✅ ĐÂY LÀ " + CLASSES.face.name.toUpperCase() : "❌ KHÔNG PHẢI " + CLASSES.face.name.toUpperCase()) + "<br><span style='font-size:22px;'>Chắc chắn " + p.conf + "% • Độ sáng " + f.b + " • Độ tương phản " + f.c + "</span>";
+    if (r.via === 'faceapi' && r.kind === 'teacher') {
+      vd.innerHTML = "✅ ĐÂY LÀ " + CLASSES.face.name.toUpperCase() + "<br><span style='font-size:22px;'>Nhận diện khuôn mặt • khoảng cách " + r.dist.toFixed(2) + " (càng gần 0 càng giống thầy) • Độ sáng " + f.b + " • Độ tương phản " + f.c + "</span>";
+    } else {
+      vd.innerHTML = (win ? "✅ ĐÂY LÀ " + CLASSES.face.name.toUpperCase() : "❌ KHÔNG PHẢI " + CLASSES.face.name.toUpperCase()) + "<br><span style='font-size:22px;'>Chắc chắn " + p.conf + "% • Độ sáng " + f.b + " • Độ tương phản " + f.c + "</span>";
+    }
     var log = document.getElementById("wzLog");
     var row = document.createElement("div");
-    row.textContent = "Thử " + (log.children.length+1) + " — S " + f.b + " • T " + f.c + " → " + (win ? "✅ " + CLASSES.face.name + " (" + p.conf + "%)" : "❌ Không phải " + CLASSES.face.name + " (" + p.conf + "%)");
+    row.textContent = "Thử " + (log.children.length+1) + " — S " + f.b + " • T " + f.c + " → " + ((r.via === 'faceapi' && r.kind === 'teacher') ? "✅ " + CLASSES.face.name + " (nhận diện, khoảng cách " + r.dist.toFixed(2) + ")" : (win ? "✅ " + CLASSES.face.name + " (" + p.conf + "%)" : "❌ Không phải " + CLASSES.face.name + " (" + p.conf + "%)"));
     log.insertBefore(row, log.firstChild);
     while (log.children.length > 6) log.removeChild(log.lastChild);
     var _bv = document.getElementById("bbVotes");
@@ -4362,6 +4565,7 @@ async function liveTestStart(){
   if (!ok) return;
   var ready = await wzWaitVideo();
   if (!ready){ toast("Camera chưa sẵn sàng — bấm lại."); return; }
+  await faEnsureDescs();
   liveTestActive = true;
   var b1 = document.getElementById("liveTestBtn"); if (b1) b1.disabled = true;
   var b2 = document.getElementById("liveTestStopBtn"); if (b2) b2.disabled = false;
@@ -4384,8 +4588,8 @@ async function liveTestTick(){
     var img = new Image();
     await new Promise(function(res, rej){ img.onload = res; img.onerror = rej; img.src = url; });
     var f = computeFeatures(img, 1, 1);
-    var g = await kiemTraMat(v, f);
-    if (!g.ok) {
+    var r = await faceRecognize(v, f);
+    if (r.kind === 'noface') {
       testDot = null; drawMap();
       var lr0 = document.getElementById("liveResult");
       if (lr0){ lr0.className = "live-result warn"; lr0.innerHTML = "🚫 <b>Không thấy mặt trong khung hình</b><br><span>Đưa mặt vào khung rồi thử lại — máy không đoán khi không thấy mặt.</span>"; }
@@ -4394,15 +4598,32 @@ async function liveTestTick(){
       updateDoor(null);
       liveTestBusy = false; return;
     }
+    if (r.kind === 'other') {
+      var _pO2 = predict(r.f);
+      testDot = {b:r.f.b, c:r.f.c, truth:null, pred:_pO2.win, conf:_pO2.conf, near:_pO2.near};
+      drawMap();
+      var lrO2 = document.getElementById("liveResult");
+      if (lrO2){ lrO2.className = "live-result bad"; lrO2.innerHTML = "❌ <b>KHÔNG PHẢI MẶT THẦY</b><br><span>Nhận diện khuôn mặt • khoảng cách " + (r.dist==null?"?":r.dist.toFixed(2)) + " — mặt này khác mặt thầy đã lưu.</span>"; }
+      var _bvO2 = document.getElementById("bbVotes");
+      if (_bvO2) _bvO2.textContent = "LIVE — mặt người khác nên máy không mở cửa.";
+      updateDoor(null);
+      liveTestBusy = false; return;
+    }
+    f = r.f;
     var p = predict(f);
     testDot = {b:f.b, c:f.c, truth:null, pred:p.win, conf:p.conf, near:p.near};
     drawMap();
-    var win = p.win === CLASSES.face.name;
+    var win = (r.via === 'faceapi' && r.kind === 'teacher') ? true : p.win === CLASSES.face.name;
     var lr = document.getElementById("liveResult");
     if (lr){
       lr.className = "live-result " + (win ? "ok" : "bad");
-      lr.innerHTML = (win ? "✅ ĐÂY LÀ " : "❌ KHÔNG PHẢI ") + CLASSES.face.name.toUpperCase()
-        + "<br><span>Chắc chắn " + p.conf + "% • Độ sáng " + f.b + " • Độ tương phản " + f.c + "</span>";
+      if (r.via === 'faceapi' && r.kind === 'teacher') {
+        lr.innerHTML = "✅ ĐÂY LÀ " + CLASSES.face.name.toUpperCase()
+          + "<br><span>Nhận diện khuôn mặt • khoảng cách " + r.dist.toFixed(2) + " (càng gần 0 càng giống thầy) • Độ sáng " + f.b + " • Độ tương phản " + f.c + "</span>";
+      } else {
+        lr.innerHTML = (win ? "✅ ĐÂY LÀ " : "❌ KHÔNG PHẢI ") + CLASSES.face.name.toUpperCase()
+          + "<br><span>Chắc chắn " + p.conf + "% • Độ sáng " + f.b + " • Độ tương phản " + f.c + "</span>";
+      }
     }
     var _bv = document.getElementById("bbVotes");
     if (_bv) _bv.textContent = "LIVE — 3 chấm gần nhất: " + p.near.map(function(n){ return "“" + n.label + "” (" + n.d.toFixed(1) + ")"; }).join(" • ") + " — bỏ phiếu: " + Object.keys(p.votes).map(function(k){ return p.votes[k] + " × “" + k + "”"; }).join(" • ") + " → " + p.win + " thắng.";
