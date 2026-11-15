@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Học Nhìn Ảnh v10.2 — 7 slide + Hệ thống huấn luyện kiểu Teachable Machine — Mở hộp đen xem máy học</title>
+<title>AI Học Nhìn Ảnh v10.3 — 7 slide + Hệ thống huấn luyện kiểu Teachable Machine — Mở hộp đen xem máy học</title>
 <style>
 
 /* ================= PHONG CÁCH: VIỄN TƯỞNG (SCI-FI) — nền vũ trụ navy tối, viền cyan phát sáng, điểm nhấn cam ================= */
@@ -662,6 +662,7 @@ button[onclick*="trUpDesk"], button[onclick*="trClear('desk')"], button[onclick*
 .wz-verdict{display:none; margin:12px auto; max-width:640px; border-radius:16px; padding:18px; font-size:34px; font-weight:900; text-align:center; line-height:1.3;}
 .wz-verdict.ok{background:#065F46; color:#fff; border:3px solid #34D399;}
 .wz-verdict.bad{background:#7F1D1D; color:#fff; border:3px solid #F87171;}
+.wz-verdict.warn{background:#fef3c7; color:#92400e; border:3px solid #f59e0b;}
 .wz-log{max-width:640px; margin:8px auto; font-size:16px; color:#94A3B8; line-height:1.5;}
 .wz-log div{border-top:1px solid #1E3A5F; padding:5px 2px;}
 /* ===== v9.1: tab lệnh lớp học ===== */
@@ -752,6 +753,7 @@ button[onclick*="trUpDesk"], button[onclick*="trClear('desk')"], button[onclick*
 #trainer #trStep{background:rgba(26,115,232,.08); border-left-color:#1a73e8; color:#0f172a;}
 #trainer .wz-verdict.ok{background:#dcfce7; color:#14532d; border-color:#22c55e;}
 #trainer .wz-verdict.bad{background:#fee2e2; color:#7f1d1d; border-color:#ef4444;}
+#trainer .wz-verdict.warn{background:#fef3c7; color:#92400e; border-color:#f59e0b;}
 .desk-grid{grid-template-columns:repeat(3,1fr) !important; max-width:420px;}
 .dark-badge{display:none; margin:8px 0 0; font-size:16px; font-weight:800; color:#fbbf24; background:#1e293b; border-radius:10px; padding:8px 12px; text-align:center;}
 .v10-stats{font-size:15px; color:#64748b; text-align:center; margin:10px 0 0; line-height:1.4;}
@@ -780,6 +782,7 @@ button[onclick*="trUpDesk"], button[onclick*="trClear('desk')"], button[onclick*
 .live-result{margin:12px auto; max-width:640px; border-radius:14px; padding:14px; font-size:24px; font-weight:900; text-align:center; line-height:1.35; background:#f1f5f9; color:#334155; border:3px solid #dbe2ea;}
 .live-result.ok{background:#dcfce7; color:#14532d; border-color:#22c55e;}
 .live-result.bad{background:#fee2e2; color:#7f1d1d; border-color:#ef4444;}
+.live-result.warn{background:#fef3c7; color:#92400e; border-color:#f59e0b;}
 .live-result span{font-size:18px; font-weight:700;}
 /* --- cua kho bau: mo theo ket qua THAT cua k-NN --- */
 .door-panel{background:#fff; border-radius:20px; box-shadow:0 2px 12px rgba(15,23,42,.08); padding:16px 18px; margin-top:16px; border-top:6px solid #b45309; transition:transform .25s ease, box-shadow .25s ease;}
@@ -868,6 +871,7 @@ body.v10-dark #trainer .tr-note{color:#94a3b8;}
 body.v10-dark #trainer #trStep{background:rgba(34,211,238,.08); border-left-color:#22d3ee; color:#e0f2fe;}
 body.v10-dark #trainer .wz-verdict.ok{background:#065f46; color:#fff; border-color:#34d399;}
 body.v10-dark #trainer .wz-verdict.bad{background:#7f1d1d; color:#fff; border-color:#f87171;}
+body.v10-dark #trainer .wz-verdict.warn{background:#78350f; color:#fff; border-color:#fbbf24;}
 body.v10-dark .dark-badge{display:block;}
 body.v10-dark .v10-stats{color:#94a3b8;}
 body.v10-dark .bb-panel{background:#111c33; box-shadow:0 2px 12px rgba(0,0,0,.5);}
@@ -885,6 +889,7 @@ body.v10-dark .bb-honest{color:#94a3b8;}
 body.v10-dark .live-result{background:#0f172a; color:#cbd5e1; border-color:#334155;}
 body.v10-dark .live-result.ok{background:#065f46; color:#fff; border-color:#34d399;}
 body.v10-dark .live-result.bad{background:#7f1d1d; color:#fff; border-color:#f87171;}
+body.v10-dark .live-result.warn{background:#78350f; color:#fff; border-color:#fbbf24;}
 body.v10-dark .door-panel{background:#111c33; box-shadow:0 2px 12px rgba(0,0,0,.5);}
 body.v10-dark .door-panel h3{color:#fff;}
 body.v10-dark .door-status{color:#cbd5e1;}
@@ -1867,6 +1872,49 @@ function predict(pt){
   if(Object.keys(votes).length>1) conf=Math.max(5,conf-20);
   return {win, conf, near, votes};
 }
+
+/* ===== v10.3 — CỔNG KIỂM TRA MẶT (15/11) =====
+   Lỗi thầy báo: đưa mặt ra khỏi khung mà app vẫn nhận là thầy.
+   Cổng này chỉ lo TÌM mặt (như Google/Teachable Machine tìm mặt trước),
+   rồi máy vẫn đoán bằng 2 con số + k-NN của bài học như cũ — KHÔNG đổi
+   sang MobileNet (đổi thì ảnh tối vẫn nhận đúng, mất điểm bài học).
+   - Chính: FaceDetector có sẵn trong Chrome (offline, không tải gì thêm).
+   - Dự phòng khi trình duyệt không có FaceDetector (đã đo thật trên v10.2):
+     tường phẳng c≈0, mặt dù rất tối vẫn c≥19,4 → tương phản <15 là không mặt;
+     khoảng cách >60 so với mọi chấm đã học là lưới thứ hai (riêng khoảng cách
+     không tách được tường tối khỏi mặt rất tối nên không dùng một mình). */
+var FACE_C_MIN = 15;    /* tương phản dưới mức này = khung gần như phẳng, không có mặt */
+var FACE_DIST_MAX = 60; /* xa hơn mức này so với mọi chấm đã học = không giống gì đã học */
+var _faceDet = null, _faceDetTried = false;
+function _faceMinDist(f){
+  var best = Infinity;
+  ["face","desk"].forEach(function(cls){
+    train[cls].forEach(function(t){
+      var d = Math.hypot(f.b - t.b, f.c - t.c);
+      if (d < best) best = d;
+    });
+  });
+  return best;
+}
+/* Trả về {ok:true} nếu có mặt, {ok:false, lyDo} nếu không.
+   video: <video> đang chạy (cho FaceDetector). f: {b,c} đã tính (cho cổng dự phòng). */
+async function kiemTraMat(video, f){
+  if (window.FaceDetector) {
+    try {
+      if (!_faceDetTried) { _faceDetTried = true; _faceDet = new FaceDetector({fastMode:true}); }
+      if (_faceDet) {
+        var faces = await _faceDet.detect(video);
+        if (faces && faces.length > 0) return {ok:true, cach:"FaceDetector"};
+        return {ok:false, cach:"FaceDetector", lyDo:"Không thấy mặt trong khung hình"};
+      }
+    } catch(e){ /* FaceDetector có mà chạy không được -> dùng cổng dự phòng */ }
+  }
+  if (f.c < FACE_C_MIN) return {ok:false, cach:"tuong-phan", lyDo:"Không thấy mặt trong khung hình"};
+  var dmin = _faceMinDist(f);
+  if (dmin !== Infinity && dmin > FACE_DIST_MAX) return {ok:false, cach:"khoang-cach", lyDo:"Không thấy mặt trong khung hình"};
+  return {ok:true, cach:"du-phong"};
+}
+
 function setStation(i){
   document.querySelectorAll(".station").forEach((s,j)=>{
     s.classList.toggle("active", j===i-1);
@@ -1988,8 +2036,18 @@ function snapPhoto(){
   cv.getContext("2d").drawImage(v,0,0,480,360);
   const url=cv.toDataURL("image/jpeg",0.85);
   const img=new Image();
-  img.onload=()=>{
+  img.onload=async ()=>{
     const f=computeFeatures(img,1,1);
+    const g=await kiemTraMat(v,f);
+    if(!g.ok){
+      testDot=null; drawMap();
+      const box=document.getElementById("result");
+      box.className="result show unsure";
+      box.innerHTML='<h3>🚫 KHÔNG THẤY MẶT TRONG KHUNG HÌNH</h3>'
+        +'<div style="font-size:21px;">Đưa mặt vào khung rồi bấm “Chụp ảnh này” lại — máy không đoán khi không thấy mặt, và không lưu ảnh này.</div>'
+        +'<div class="conclusion">💡 KẾT LUẬN: Máy chỉ đoán khi thấy mặt thật trong khung hình.</div>';
+      return;
+    }
     const item={cls:"face", b:f.b, c:f.c, bright:1, crop:1, thumb:url, imgEl:img, label:"Ảnh webcam"};
     showInspector(item);
     if(train.face.length===0 && train.desk.length===0){ toast("Ảnh đã chụp — hãy nạp dữ liệu mẫu trước rồi mới đoán ảnh này."); return; }
@@ -2185,7 +2243,9 @@ async function captureOneFrame() {
   const url = cv.toDataURL("image/jpeg", 0.85);
   const img = new Image();
   await new Promise(function (res, rej) { img.onload = res; img.onerror = rej; img.src = url; });
-  return { img: img, url: url };
+  const _f = computeFeatures(img, 1, 1);
+  const _g = await kiemTraMat(v, _f);
+  return { img: img, url: url, coMat: _g.ok };
 }
 function addTeacherPhoto(fr, label) {
   if (train.face.length >= FACE_MAX) { toast("Lớp “Thầy Hưng” đã đủ 10 ảnh rồi."); return; }
@@ -2209,24 +2269,28 @@ async function captureTeacherPhase(phase) {
       fixedDone = false;
       document.getElementById("btnFix").disabled = false;
       st.textContent = "Đang chụp 3 ảnh đủ sáng — thầy giữ yên…";
+      var _skip1 = 0;
       for (let i = 0; i < 3; i++) {
         await sleep(650);
         const fr = await captureOneFrame();
+        if (!fr.coMat) { _skip1++; continue; }
         addTeacherPhoto(fr, "Ảnh thật của thầy #" + (train.face.length + 1));
       }
       renderThumbs(); drawMap(); saveFace10();
-      st.textContent = "Đã chụp 3 ảnh đủ sáng. Bây giờ che bớt sáng lại (hoặc quay lưng về phía sáng), rồi bấm “🌑 Chụp 3 ảnh tối”.";
+      st.textContent = "Đã chụp 3 ảnh đủ sáng." + (_skip1 ? " Bỏ qua " + _skip1 + " khung không thấy mặt." : "") + " Bây giờ che bớt sáng lại (hoặc quay lưng về phía sáng), rồi bấm “🌑 Chụp 3 ảnh tối”.";
       toast("Đã chụp 3 ảnh đủ sáng của thầy.");
     } else {
       st.textContent = "Đang chụp 3 ảnh tối — thầy giữ yên…";
+      var _skip2 = 0;
       for (let i = 0; i < 3; i++) {
         await sleep(650);
         const fr = await captureOneFrame();
+        if (!fr.coMat) { _skip2++; continue; }
         addTeacherPhoto(fr, "Ảnh thật của thầy (tối) #" + (train.face.length + 1));
       }
       renderThumbs(); drawMap(); saveFace10();
       stopTeacherCam();
-      st.textContent = "Đã chụp " + train.face.length + " ảnh thật (" + train.face.length + "/10) — lớp “Thầy Hưng” giờ dùng ảnh thật. Muốn đủ 10 thì mở “Hệ thống huấn luyện” chụp thêm.";
+      st.textContent = "Đã chụp " + train.face.length + " ảnh thật (" + train.face.length + "/10)" + ((_skip1 + _skip2) ? " — bỏ qua " + (_skip1 + _skip2) + " khung không thấy mặt." : "") + " — lớp “Thầy Hưng” giờ dùng ảnh thật. Muốn đủ 10 thì mở “Hệ thống huấn luyện” chụp thêm.";
       toast("Đã chụp " + train.face.length + " ảnh thật của thầy (" + train.face.length + "/10).");
     }
   } catch (e) {
@@ -2555,6 +2619,19 @@ function trSnapFrame(cls, fromHold) {
   var img = new Image();
   img.onload = function () {
     var f = computeFeatures(img, 1, 1);
+    /* v10.3: cổng mặt đồng bộ (giữ chụp không chờ FaceDetector): khung gần như
+       phẳng hoặc quá xa mọi chấm đã học thì không lưu ảnh rác. */
+    var _cOk = f.c >= FACE_C_MIN, _dOk = true;
+    if (_cOk && train[cls].length > 0) {
+      var _bd = Infinity;
+      train[cls].forEach(function (t) { var _d = Math.hypot(f.b - t.b, f.c - t.c); if (_d < _bd) _bd = _d; });
+      _dOk = _bd <= FACE_DIST_MAX;
+    }
+    if (!_cOk || !_dOk) {
+      var _err0 = document.getElementById(cls === "face" ? "trCamErrFace" : "trCamErrDesk");
+      if (_err0) _err0.textContent = cls === "face" ? "🚫 Không thấy mặt trong khung hình — ảnh này không được lưu." : "🚫 Khung hình này không giống gì đã học — ảnh không được lưu.";
+      return;
+    }
     train[cls].push({ cls: cls, b: f.b, c: f.c, bright: 1, crop: 1, thumb: variantThumb(img, 1, 1, 120), imgEl: img, label: CLASSES[cls].name + " (webcam) #" + (train[cls].length + 1) });
     trSync();
     trUpdateRing(cls, train[cls].length);
@@ -2634,10 +2711,15 @@ async function trSnapOnce(cls, btn) {
   if (!ok) { if (btn) { btn.disabled = false; btn.textContent = old; } return; }
   if (btn) btn.textContent = "⏳ Đang chụp…";
   var ready = await trWaitVideoReady(cls);
-  if (ready && trSnapFrame(cls, false)) {
-    toast("Đã chụp 1 ảnh vào lớp “" + trDName(cls) + "”.");
-  } else if (err) {
-    err.textContent = "⚠️ Camera chưa kịp mở hình — thử bấm lại.";
+  if (ready) {
+    var _g = await kiemTraMat(document.getElementById("trVideo"), trFrameFeatures());
+    if (!_g.ok) {
+      if (err) err.textContent = "🚫 Không thấy mặt trong khung hình — đưa mặt vào khung rồi chụp lại.";
+    } else if (trSnapFrame(cls, false)) {
+      toast("Đã chụp 1 ảnh vào lớp “" + trDName(cls) + "”.");
+    } else if (err) {
+      err.textContent = "⚠️ Camera chưa kịp mở hình — thử bấm lại.";
+    }
   }
   if (btn) { btn.disabled = false; btn.textContent = old; }
 }
@@ -3717,6 +3799,8 @@ async function wzSnap(){
     var img = new Image();
     await new Promise(function(res, rej){ img.onload=res; img.onerror=rej; img.src=url; });
     var f = computeFeatures(img, 1, 1);
+    var g = await kiemTraMat(v, f);
+    if (!g.ok){ toast("🚫 Không thấy mặt trong khung hình — đưa mặt vào khung rồi chụp lại."); wzBusy = false; return; }
     train.face.push({cls:"face", b:f.b, c:f.c, bright:1, crop:1, thumb:url, imgEl:img, label:CLASSES.face.name+" #"+(train.face.length+1), savedAt:Date.now()});
     window._teacherImg = img;
     var fl = document.getElementById("wzFlash");
@@ -3809,6 +3893,16 @@ async function wzTest(){
     var img = new Image();
     await new Promise(function(res, rej){ img.onload=res; img.onerror=rej; img.src=url; });
     var f = computeFeatures(img, 1, 1);
+    var g = await kiemTraMat(v, f);
+    if (!g.ok) {
+      testDot = null; drawMap();
+      var vd0 = document.getElementById("wzVerdict");
+      if (vd0){ vd0.style.display = "block"; vd0.className = "wz-verdict warn"; vd0.innerHTML = "🚫 <b>Không thấy mặt trong khung hình</b><br><span style='font-size:22px;'>Đưa mặt vào khung rồi bấm thử lại — máy không đoán khi không thấy mặt.</span>"; }
+      var log0 = document.getElementById("wzLog");
+      if (log0){ var row0 = document.createElement("div"); row0.textContent = "Thử " + (log0.children.length+1) + " — không thấy mặt, máy không đoán."; log0.insertBefore(row0, log0.firstChild); while (log0.children.length > 6) log0.removeChild(log0.lastChild); }
+      updateDoor(null);
+      return;
+    }
     var p = predict(f);
     testDot = {b:f.b, c:f.c, truth:null, pred:p.win, conf:p.conf, near:p.near};
     drawMap();
@@ -4290,6 +4384,16 @@ async function liveTestTick(){
     var img = new Image();
     await new Promise(function(res, rej){ img.onload = res; img.onerror = rej; img.src = url; });
     var f = computeFeatures(img, 1, 1);
+    var g = await kiemTraMat(v, f);
+    if (!g.ok) {
+      testDot = null; drawMap();
+      var lr0 = document.getElementById("liveResult");
+      if (lr0){ lr0.className = "live-result warn"; lr0.innerHTML = "🚫 <b>Không thấy mặt trong khung hình</b><br><span>Đưa mặt vào khung rồi thử lại — máy không đoán khi không thấy mặt.</span>"; }
+      var _bv0 = document.getElementById("bbVotes");
+      if (_bv0) _bv0.textContent = "LIVE — không thấy mặt nên máy không đoán.";
+      updateDoor(null);
+      liveTestBusy = false; return;
+    }
     var p = predict(f);
     testDot = {b:f.b, c:f.c, truth:null, pred:p.win, conf:p.conf, near:p.near};
     drawMap();
